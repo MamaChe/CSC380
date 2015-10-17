@@ -1,4 +1,4 @@
-package com.example.ericm.helloworld;
+package com.example.ericm.test;
 
 import android.app.Application;
 import android.test.ApplicationTestCase;

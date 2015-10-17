@@ -1,16 +1,17 @@
-package com.example.ericm.helloworld;
+package com.example.ericm.gui;
 
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
 
-import com.google.android.gms.maps.CameraUpdate;
+import com.example.ericm.helloworld.R;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.UiSettings;
 import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.maps.model.Polyline;
+import com.google.android.gms.maps.model.PolylineOptions;
 
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback {
 
@@ -74,6 +75,15 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         mUiSettings.setScrollGesturesEnabled(false);
         mUiSettings.setZoomGesturesEnabled(false);
         mUiSettings.setTiltGesturesEnabled(false);
+
+        // Instantiates a new Polyline object and adds points to define a rectangle
+        PolylineOptions rectOptions = new PolylineOptions()
+                .add(new LatLng(37.614372, -122.385340))
+                .add(new LatLng(37.614330, -122.385345))  // North of the previous point, but at the same longitude
+                .add(new LatLng(37.6144, -122.3855)); // Closes the polyline.
+
+// Get back the mutable Polyline
+        Polyline polyline = mMap.addPolyline(rectOptions);
     }
 
     @Override
