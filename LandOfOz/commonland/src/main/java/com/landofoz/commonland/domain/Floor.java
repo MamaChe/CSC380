@@ -5,4 +5,7 @@ package com.landofoz.commonland.domain;
  */
 public class Floor {
 
+    public long getId() {
+        return 999;
+    }
 }
