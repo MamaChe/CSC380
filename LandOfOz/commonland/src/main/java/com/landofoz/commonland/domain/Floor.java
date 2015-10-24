@@ -5,7 +5,31 @@ package com.landofoz.commonland.domain;
  */
 public class Floor {
 
+    private String name;
+    private int level;
+
+    Floor(String n, int l) {
+        name = n;
+        level = l;
+    }
+
     public long getId() {
-        return 999;
+       return 999;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public int getLevel() {
+        return level;
+    }
+
+    public void setLevel(int level) {
+        this.level = level;
     }
 }
