@@ -4,8 +4,13 @@ package com.landofoz.commonland.domain;
  * Created by ericm on 10/17/2015.
  */
 public class Label {
+    private long id;
     private String name;
     private Location location;
+
+    public long getId() {
+        return id;
+    }
 
     public String getName() {
         return name;

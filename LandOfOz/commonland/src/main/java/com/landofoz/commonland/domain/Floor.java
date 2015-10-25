@@ -4,7 +4,7 @@ package com.landofoz.commonland.domain;
  * Created by ericm on 10/17/2015.
  */
 public class Floor {
-
+    private long id;
     private String name;
     private int level;
 
@@ -14,8 +14,9 @@ public class Floor {
     }
 
     public long getId() {
-       return 999;
+       return id;
     }
+
 
     public String getName() {
         return name;

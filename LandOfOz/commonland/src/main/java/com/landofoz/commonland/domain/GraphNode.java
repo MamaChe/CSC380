@@ -1,20 +1,26 @@
 package com.landofoz.commonland.domain;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
  * Created by ericm on 10/17/2015.
  */
 public class GraphNode {
+    private long id;
     private Location location;
-    private List<GraphNode> neighbors;
+    List<GraphNode> neighbors;
 
-    GraphNode(Location l) {
+    GraphNode(Location l, List<GraphNode> neighbors) {
         location = l;
+        neighbors = new ArrayList<GraphNode>();
     }
 
 
 
+    public long getId() {
+        return id;
+    }
 
     public Location getLocation(){
         return location;
@@ -28,7 +34,7 @@ public class GraphNode {
         return neighbors;
     }
 
-    public void setNeighbors(List<GraphNode> neighbors) {
+    public void setNeighbors(ArrayList<GraphNode> neighbors) {
         this.neighbors = neighbors;
     }
 }
