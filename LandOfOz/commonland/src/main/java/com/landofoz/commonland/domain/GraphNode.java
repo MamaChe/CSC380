@@ -29,11 +29,11 @@ public class GraphNode  extends Persistent {
         this.neighbors = neighbors;
     }
 
-    public GraphNode getRoot(Location origin) {
+    public GraphNode getNodeByLocation(Location origin) {
         if(origin.getLatitude() == this.location.getLatitude() && origin.getLongitude() == this.getLocation().getLongitude())
             return this;
         for (GraphNode neighbor: neighbors) {
-            neighbor.getRoot(origin);
+            neighbor.getNodeByLocation(origin);
         }
         return null;
     }
