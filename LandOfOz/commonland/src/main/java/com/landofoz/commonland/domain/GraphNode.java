@@ -8,12 +8,12 @@ import java.util.List;
 /**
  * Created by ericm on 10/17/2015.
  */
-public class GraphNode extends Persistent {
+public class GraphNode  extends Persistent {
 
     private Location location;
     List<GraphNode> neighbors;
 
-    public Location getLocation() {
+    public Location getLocation(){
         return location;
     }
 
@@ -27,5 +27,14 @@ public class GraphNode extends Persistent {
 
     public void setNeighbors(ArrayList<GraphNode> neighbors) {
         this.neighbors = neighbors;
+    }
+
+    public GraphNode getRoot(Location origin) {
+        if(origin.getLatitude() == this.location.getLatitude() && origin.getLongitude() == this.getLocation().getLongitude())
+            return this;
+        for (GraphNode neighbor: neighbors) {
+            neighbor.getRoot(origin);
+        }
+        return null;
     }
 }
