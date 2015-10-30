@@ -3,9 +3,12 @@ package com.landofoz.commonland.persistence;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
+import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.provider.BaseColumns;
+
+import java.util.logging.Logger;
 
 /**
  * Created by ericm on 10/21/2015.
@@ -32,11 +35,16 @@ public abstract class GenericDAO extends SQLiteOpenHelper implements BaseColumns
                 "DROP TABLE IF EXISTS " + TABLE_NAME;
         this.SQL_CREATE_ENTRIES = SQL_CREATE_ENTRIES;
         db = this.getWritableDatabase();
+        try {
+            db.execSQL(SQL_CREATE_ENTRIES);
+        } catch(SQLException e) {
+            System.out.println(e.getStackTrace());
+        }
     }
 
     @Override
     public void onCreate(SQLiteDatabase db) {
-        db.execSQL(SQL_CREATE_ENTRIES);
+        //db.execSQL(SQL_CREATE_ENTRIES);
     }
 
     @Override

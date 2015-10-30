@@ -8,15 +8,9 @@ public class Floor {
     private String name;
     private int level;
 
-    Floor(String n, int l) {
-        name = n;
-        level = l;
-    }
-
     public long getId() {
        return id;
     }
-
 
     public String getName() {
         return name;

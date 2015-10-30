@@ -4,7 +4,9 @@ import android.test.ActivityInstrumentationTestCase2;
 
 import com.example.ericm.gui.MapsActivity;
 import com.landofoz.commonland.domain.Floor;
+import com.landofoz.commonland.domain.Label;
 import com.landofoz.commonland.domain.Location;
+import com.landofoz.commonland.persistence.LabelDAO;
 import com.landofoz.commonland.persistence.LocationDAO;
 
 import org.junit.Test;
@@ -35,5 +37,29 @@ public class MapsActivityTest extends ActivityInstrumentationTestCase2<MapsActiv
         assertTrue(dao.findByType(1).size() > 0);
         assertTrue(dao.remove(id));
         assertTrue(dao.findById(id) == null);
+    }
+
+    @Test
+    public void testLabelDAO() {
+        LabelDAO dao = new LabelDAO(getActivity().getApplicationContext());
+
+        Label label = new Label();
+        label.setName("name");
+        Location location = new Location();
+        location.setId(1);
+        label.setLocation(location);
+
+        long id = dao.insert(label);
+
+        assertTrue(dao.findById(id) != null);
+
+        label.setId(id);
+        label.setName("updatedName");
+        dao.update(label);
+
+        assertTrue(dao.findById(id).getName().equals("updatedName"));
+
+        dao.remove(id);
+        assertTrue(dao.findById(id)==null);
     }
 }
