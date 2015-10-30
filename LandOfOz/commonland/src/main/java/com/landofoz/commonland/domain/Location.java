@@ -1,11 +1,11 @@
 package com.landofoz.commonland.domain;
 
+import com.landofoz.commonland.persistence.Persistent;
+
 /**
  * Created by ericm on 10/17/2015.
  */
-public class Location {
-
-    private long id;
+public class Location extends Persistent {
 
     private float longitude;
 
@@ -48,11 +48,4 @@ public class Location {
         this.floor = floor;
     }
 
-    public long getId() {
-        return id;
-    }
-
-    public void setId(long id) {
-        this.id = id;
-    }
 }

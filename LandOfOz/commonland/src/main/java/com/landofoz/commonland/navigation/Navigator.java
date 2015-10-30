@@ -10,7 +10,7 @@ import java.util.List;
  */
 public class Navigator {
 
-    GraphNode root;
+    GraphNode graph;
 
     public List<Location> getBestPath(Location origin, Location destination, int type){
         return null;

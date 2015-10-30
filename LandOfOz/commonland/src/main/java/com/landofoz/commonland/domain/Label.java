@@ -1,21 +1,14 @@
 package com.landofoz.commonland.domain;
 
+import com.landofoz.commonland.persistence.Persistent;
+
 /**
  * Created by ericm on 10/17/2015.
  */
-public class Label {
+public class Label extends Persistent {
 
-    private long id;
     private String name;
     private Location location;
-
-    public long getId() {
-        return id;
-    }
-
-    public void setId(long id){
-        this.id = id;
-    }
 
     public String getName() {
         return name;

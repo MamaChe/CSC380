@@ -1,16 +1,14 @@
 package com.landofoz.commonland.domain;
 
+import com.landofoz.commonland.persistence.Persistent;
+
 /**
  * Created by ericm on 10/17/2015.
  */
-public class Floor {
-    private long id;
+public class Floor extends Persistent {
+
     private String name;
     private int level;
-
-    public long getId() {
-       return id;
-    }
 
     public String getName() {
         return name;
