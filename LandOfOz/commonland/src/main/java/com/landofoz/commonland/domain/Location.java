@@ -7,6 +7,14 @@ import com.landofoz.commonland.persistence.Persistent;
  */
 public class Location extends Persistent {
 
+    public static final int
+        HALLWAY = 0,
+        ELEVATOR = 1,
+        ESCALATOR = 2,
+        STAIRWAY = 3,
+        ENTRANCE = 4,
+        DESTINATION = 5;
+
     private float longitude;
 
     private float latitude;
