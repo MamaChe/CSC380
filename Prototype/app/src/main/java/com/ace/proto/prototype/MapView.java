@@ -62,7 +62,6 @@ public class MapView extends ImageView implements View.OnClickListener {
     }
     @Override
     public void onDraw(Canvas canvas){
-        canvas.scale(userScale, userScale);
         super.onDraw(canvas);
         canvas.drawPath(path, paint);
         //Log.d("drawing", "fs");

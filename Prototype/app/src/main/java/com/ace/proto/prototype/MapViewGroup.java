@@ -5,6 +5,7 @@ import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
 import android.content.Context;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.ScaleGestureDetector;
 import android.view.View;
@@ -17,7 +18,7 @@ import java.util.List;
  */
 public class MapViewGroup extends RelativeLayout implements Gui, ScaleGestureDetector.OnScaleGestureListener {
     float downX, downY, trueDownY;
-    boolean rotated = false, zoomedOut = true, isClick = false, isPan = false;
+    boolean rotated = false, zoomedOut = true, isClick = false, isScalingMotion = false;
     int activeLayer;
     ScaleGestureDetector scaleGestureDetector;
     private AnimatorSet rotate, undoScroll;
@@ -147,9 +148,7 @@ public class MapViewGroup extends RelativeLayout implements Gui, ScaleGestureDet
     @Override
      public boolean onTouchEvent(MotionEvent event) {
         scaleGestureDetector.onTouchEvent(event);
-        if(isPan){
-            isPan = false;
-        }else {
+        if(event.getPointerCount()<=1){
             float currentY = event.getY();
             float currentX = event.getX();
             int scrollByY, scrollByX;
@@ -173,13 +172,12 @@ public class MapViewGroup extends RelativeLayout implements Gui, ScaleGestureDet
                         if (scrollByX > 1 || scrollByY > 1) {
                             isClick = false;
                         }
-
                     } else if (!zoomedOut) {
-                        /*scrollByX = (int) (downX - currentX);
+                        scrollByX = (int) (downX - currentX);
                         scrollByY = (int) (downY - currentY);
                         for (int i = 0; i < getChildCount(); i++) {
                             getChildAt(i).scrollBy(scrollByX, scrollByY);
-                        }*/
+                        }
                     } else {
                         //this part handles the draging of unrotated mapviews
                         if (trueDownY - currentY <= 0 && activeLayer > 0) {
@@ -218,9 +216,6 @@ public class MapViewGroup extends RelativeLayout implements Gui, ScaleGestureDet
     }
     public boolean onScale(ScaleGestureDetector detector){
         if(!rotated) {
-            if (detector.getScaleFactor() > 1.2 || detector.getScaleFactor() < .8) {
-                isPan = true;
-            }
             float scale = getChildAt(0).getScaleX() * detector.getScaleFactor();
             if (scale > 1) {
                 zoomedOut = false;
@@ -235,14 +230,13 @@ public class MapViewGroup extends RelativeLayout implements Gui, ScaleGestureDet
         return true;
     }
     public void onScaleEnd(ScaleGestureDetector detector){
-        unrotate();
     }
     private void setChildrenScale(float scale){
         for(int i = 0;  i < getChildCount(); i++){
             getChildAt(i).setScaleX(scale);
             getChildAt(i).setScaleY(scale);
             //setScaleX(scale);
-            //setScaleY(scale); 
+            //setScaleY(scale);
         }
     }
     public void setActiveLayer(View view){
