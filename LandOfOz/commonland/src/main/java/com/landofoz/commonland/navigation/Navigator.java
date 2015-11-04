@@ -2,8 +2,10 @@ package com.landofoz.commonland.navigation;
 
 import com.landofoz.commonland.domain.GraphNode;
 import com.landofoz.commonland.domain.Location;
+import com.landofoz.commonland.persistence.GraphNodeDAO;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -13,28 +15,38 @@ public class Navigator {
 
     GraphNode graph;
 
-    public Navigator(){
-        //graph = new GraphNodeDAO().getGraph();
+    public Navigator() {
+        graph = new GraphNodeDAO().getGraph();
     }
 
-    public List<Location> getBestPath(Location origin, Location destination, int type){
-        GraphNode root = graph.getNodeByLocation(origin);
-        return getBestPathAux(graph.getNodeByLocation(origin),graph.getNodeByLocation(destination), type);
+    public Navigator(GraphNode graph) {
+        this.graph = graph;
     }
 
-    private List<GraphNode> getBestPathAux(GraphNode origin, GraphNode destination, int type) {
-        List<GraphNode> path = new ArrayList<GraphNode>();
-        if(origin.equals(destination)){
-            path.add(origin);
-            return path;
+    public List<Location> getBestPath(Location origin, Location destination, int type) {
+        GraphNode nodeOrigin = graph.getNodeByLocation(origin);
+        GraphNode nodeDestination = graph.getNodeByLocation(destination);
+        return getBestPathAux(nodeOrigin, nodeDestination, type);
+    }
+
+    private List<Location> getBestPathAux(GraphNode origin, GraphNode destination, int type) {
+        List<Location> path = null;
+        if (origin.equals(destination)) {
+            path = new ArrayList<Location>();
+            path.add(origin.getLocation());
         } else {
-            for (GraphNode neighbor: origin.getNeighbors()) {
-
+            for (GraphNode neighbor : origin.getNeighbors()) {
+                if (neighbor.getLocation().getType() == type) {
+                    path = getBestPathAux(neighbor, destination, type);
+                    if (path!=null) {
+                        path.add(neighbor.getLocation());
+                        break;
+                    }
+                }
             }
         }
-        return null;
+        if(path!=null) Collections.reverse(path);
+        return path;
     }
-
-    ;
 
 }

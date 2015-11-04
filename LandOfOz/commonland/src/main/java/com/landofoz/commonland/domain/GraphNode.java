@@ -13,6 +13,10 @@ public class GraphNode  extends Persistent {
     private Location location;
     List<GraphNode> neighbors;
 
+    public GraphNode(){
+        neighbors = new ArrayList<>();
+    }
+
     public Location getLocation(){
         return location;
     }
