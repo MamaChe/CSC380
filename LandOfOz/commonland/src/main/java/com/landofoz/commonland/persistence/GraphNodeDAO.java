@@ -16,11 +16,6 @@ public class GraphNodeDAO extends GenericDAO{
 
     public final static String TABLE_NAME = "graphNode";
     public final static String COLUMN_NAME_LOCATION = "location_id";
-    public final static String COLUMN_NAME_NEIGHBORS = "neighbors";
-
-    public final static String NEIGHBORS_TABLE_NAME = "neighbor";
-    public final static String COLUMN_NAME_NODE_ID = "node_id";
-    public final static String COLUMN_NAME_NEIGHBOR_ID = "neighbor_id";
 
     Context context;
 
@@ -28,13 +23,6 @@ public class GraphNodeDAO extends GenericDAO{
             _ID + " INTEGER PRIMARY KEY AUTOINCREMENT," +
             COLUMN_NAME_LOCATION + INTEGER_TYPE + COMMA_SEP +
             " )";
-
-    private static final String SQL_CREATE_NEIGHBORS = "CREATE TABLE " + NEIGHBORS_TABLE_NAME + " (" +
-            _ID + " INTEGER PRIMARY KEY AUTOINCREMENT," +
-            COLUMN_NAME_NODE_ID + INTEGER_TYPE + COMMA_SEP +
-            COLUMN_NAME_NEIGHBOR_ID + INTEGER_TYPE + COMMA_SEP +
-            " )";
-
 
     public GraphNodeDAO(Context context) {
         super(context, TABLE_NAME, SQL_CREATE);
@@ -48,24 +36,30 @@ public class GraphNodeDAO extends GenericDAO{
 
     private ContentValues getContentValues(GraphNode graphNode){
         ContentValues values = new ContentValues();
-         values.put(COLUMN_NAME_LOCATION, graphNode.getLocation());
-         values.put(COLUMN_NAME_NEIGHBORS, graphNode.getNeighbors());
-         values.put(_ID, graphNode.getId());
+        values.put(COLUMN_NAME_LOCATION, graphNode.getLocation());
+        values.put(_ID, graphNode.getId());
         return values;
     }
 
     public boolean insert(GraphNode graphNode){
+		//TODO insert relations with the neighbors using the neighborsDAO
+		// can user NeighborDAO.getContentValues(neiborgh) but you have to create the neiborgh objects first
     	 return super.insert(getContentValues(graphNode));
     }
 
     public boolean remove(GraphNode graphNode){
+		 //TODO uses neighborsDAO to remove all relations
+		 //can user NeighborDAO.getContentValues(neiborgh) but you have to create the neiborgh objects first
+		 neighborsDAO.removeAll(graphNode.getID());
     	 return super.remove(getContentValues(graphNode));
     }
 
     public boolean update(long id,GraphNode graphNode){
-    	return super.update(graphNode.getId(), getContentValues(graphNode));
+    	//TODO uses neighborsDAO to update all relations
+		// can user NeighborDAO.getContentValues(neiborgh) but you have to create the neiborgh objects first
+		return super.update(graphNode.getId(), getContentValues(graphNode));
     }
-    private List<GraphNode> getGraphNOdes(Cursor cursor, Context context) {
+    private List<GraphNode> getGraphNodes(Cursor cursor, Context context) {
         List<GraphNode> graphNodes = new ArrayList<GraphNode>();
         GraphNode graphNode;
         Location location;
@@ -76,9 +70,11 @@ public class GraphNodeDAO extends GenericDAO{
                 graphNode = new GraphNode();
                 graphNode.setId(cursor.getLong(cursor.getColumnIndexOrThrow(_ID)));
                 long graphNode_id = cursor.getLong(cursor.getColumnIndexOrThrow(COLUMN_NAME_GRAPHNODE_ID));
-                graphNode = GraphNodeDAO.findById(graphNode_id);
+               // graphNode = GraphNodeDAO.findById(graphNode_id);
+			   //cant use the GraphNodeDAO here, you should find the location by its location_id
+			   //and populate the graphNode.location
                 graphNode.setLocation(graphNode);
-                graphNode.setName(cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_NAME_NAME)));
+				// and then create a neighborsdao, search for all neighbors nodes and fill in the graphNode object
                 graphNodes.add(graphNode);
             } while (cursor.moveToNext());
         }
@@ -86,7 +82,7 @@ public class GraphNodeDAO extends GenericDAO{
     }
 
 
-    public void findbyid(long id, GraphNode graphNode) {
+    public void findbyId(long id, GraphNode graphNode) {
 
 		      String[] projection = {
                 _ID,

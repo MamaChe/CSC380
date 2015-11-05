@@ -12,29 +12,19 @@ import com.landofoz.commonland.domain.Location;
 //import java.util.ArrayList;
 //import java.util.List;
 
-public class GraphNodeDAO extends GenericDAO{
+public class NeighborDAO extends GenericDAO{
 
-    public final static String TABLE_NAME = "graphNode";
-    public final static String COLUMN_NAME_LOCATION = "location_id";
-    public final static String COLUMN_NAME_NEIGHBORS = "neighbors";
-
-    public final static String NEIGHBORS_TABLE_NAME = "neighbor";
+    public final static String TABLE_NAME = "neighbor";
     public final static String COLUMN_NAME_NODE_ID = "node_id";
     public final static String COLUMN_NAME_NEIGHBOR_ID = "neighbor_id";
 
     Context context;
 
-    private static final String SQL_CREATE = "CREATE TABLE " + TABLE_NAME + " (" +
-            _ID + " INTEGER PRIMARY KEY AUTOINCREMENT," +
-            COLUMN_NAME_LOCATION + INTEGER_TYPE + COMMA_SEP +
-            " )";
-
-    private static final String SQL_CREATE_NEIGHBORS = "CREATE TABLE " + NEIGHBORS_TABLE_NAME + " (" +
+    private static final String SQL_CREATE = "CREATE TABLE " + NEIGHBORS_TABLE_NAME + " (" +
             _ID + " INTEGER PRIMARY KEY AUTOINCREMENT," +
             COLUMN_NAME_NODE_ID + INTEGER_TYPE + COMMA_SEP +
             COLUMN_NAME_NEIGHBOR_ID + INTEGER_TYPE + COMMA_SEP +
             " )";
-
 
     public GraphNodeDAO(Context context) {
         super(context, TABLE_NAME, SQL_CREATE);
@@ -46,7 +36,7 @@ public class GraphNodeDAO extends GenericDAO{
         this.context = context;
     }
 
-    private ContentValues getContentValues(GraphNode graphNode){
+    public static ContentValues getContentValues(Neighbor neighbor){
         ContentValues values = new ContentValues();
          values.put(COLUMN_NAME_LOCATION, graphNode.getLocation());
          values.put(COLUMN_NAME_NEIGHBORS, graphNode.getNeighbors());
