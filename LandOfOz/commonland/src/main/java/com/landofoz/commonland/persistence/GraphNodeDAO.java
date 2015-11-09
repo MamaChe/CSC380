@@ -8,6 +8,10 @@ import android.provider.BaseColumns;
 
 import com.landofoz.commonland.domain.GraphNode;
 import com.landofoz.commonland.domain.Location;
+import com.landofoz.commonland.domain.Neighbor;
+
+import java.util.ArrayList;
+import java.util.List;
 
 //import java.util.ArrayList;
 //import java.util.List;
@@ -26,55 +30,77 @@ public class GraphNodeDAO extends GenericDAO{
 
     public GraphNodeDAO(Context context) {
         super(context, TABLE_NAME, SQL_CREATE);
-        try {
-            db.execSQL(SQL_CREATE_NEIGHBORS);
-        } catch(SQLException e) {
-            System.out.println(e.getStackTrace());
-        }
         this.context = context;
     }
 
     private ContentValues getContentValues(GraphNode graphNode){
         ContentValues values = new ContentValues();
-        values.put(COLUMN_NAME_LOCATION, graphNode.getLocation());
+        values.put(COLUMN_NAME_LOCATION, graphNode.getLocation().getId());
         values.put(_ID, graphNode.getId());
         return values;
     }
 
-    public boolean insert(GraphNode graphNode){
-		//TODO insert relations with the neighbors using the neighborsDAO
-		// can user NeighborDAO.getContentValues(neiborgh) but you have to create the neiborgh objects first
-    	 return super.insert(getContentValues(graphNode));
+    public long insert(GraphNode graphNode){
+	    NeighborDAO neighborDao = new NeighborDAO(context);
+        List<Neighbor> neighbors = getNeighbors(graphNode);
+        for (Neighbor n: neighbors) {
+            neighborDao.insert(n);
+        }
+        return super.insert(getContentValues(graphNode));
     }
 
     public boolean remove(GraphNode graphNode){
-		 //TODO uses neighborsDAO to remove all relations
-		 //can user NeighborDAO.getContentValues(neiborgh) but you have to create the neiborgh objects first
-		 neighborsDAO.removeAll(graphNode.getID());
-    	 return super.remove(getContentValues(graphNode));
+        NeighborDAO neighborDao = new NeighborDAO(context);
+        List<Neighbor> neighbors = getNeighbors(graphNode);
+        for (Neighbor n: neighbors) {
+            neighborDao.remove(n.getId());
+        }
+    	 return super.remove(graphNode.getId());
+    }
+
+    public List<Neighbor> getNeighbors(GraphNode graphNode){
+        List<Neighbor> neighbors = new ArrayList<>();
+        Neighbor neighbor = new Neighbor();
+        for (GraphNode n: graphNode.getNeighbors()) {
+            neighbor.setNode(graphNode);
+            neighbor.setNeighbor(n);
+            neighbors.add(neighbor);
+        }
+        return neighbors;
     }
 
     public boolean update(long id,GraphNode graphNode){
-    	//TODO uses neighborsDAO to update all relations
-		// can user NeighborDAO.getContentValues(neiborgh) but you have to create the neiborgh objects first
+        NeighborDAO neighborDao = new NeighborDAO(context);
+        List<Neighbor> neighbors = getNeighbors(graphNode);
+        for (Neighbor n: neighbors) {
+            neighborDao.update(n.getId(),n);
+        }
 		return super.update(graphNode.getId(), getContentValues(graphNode));
     }
+
     private List<GraphNode> getGraphNodes(Cursor cursor, Context context) {
         List<GraphNode> graphNodes = new ArrayList<GraphNode>();
         GraphNode graphNode;
         Location location;
         LocationDAO locationDAO = new LocationDAO(context);
+        NeighborDAO neighborsDAO = new NeighborDAO(context);
         if(cursor.getCount()>0) {
             cursor.moveToFirst();
             do {
                 graphNode = new GraphNode();
                 graphNode.setId(cursor.getLong(cursor.getColumnIndexOrThrow(_ID)));
-                long graphNode_id = cursor.getLong(cursor.getColumnIndexOrThrow(COLUMN_NAME_GRAPHNODE_ID));
-               // graphNode = GraphNodeDAO.findById(graphNode_id);
-			   //cant use the GraphNodeDAO here, you should find the location by its location_id
-			   //and populate the graphNode.location
-                graphNode.setLocation(graphNode);
-				// and then create a neighborsdao, search for all neighbors nodes and fill in the graphNode object
+
+                long location_id = cursor.getLong(cursor.getColumnIndexOrThrow(COLUMN_NAME_LOCATION));
+                location = locationDAO.findById(location_id);
+                graphNode.setLocation(location);
+
+                List<Long> neighbors_id = neighborsDAO.findNeighborsByNode(graphNode.getId());
+                List<GraphNode> neighbors = new ArrayList<>();
+                for (Long id: neighbors_id) {
+                    neighbors.add(findById(id));
+                }
+                graphNode.setNeighbors((ArrayList<GraphNode>) neighbors);
+
                 graphNodes.add(graphNode);
             } while (cursor.moveToNext());
         }
@@ -82,13 +108,11 @@ public class GraphNodeDAO extends GenericDAO{
     }
 
 
-    public void findbyId(long id, GraphNode graphNode) {
+    public GraphNode findById(long id) {
 
 		      String[] projection = {
                 _ID,
                 COLUMN_NAME_LOCATION,
-                COLUMN_NAME_NEIGHBORS,
-                COLUMN_NAME_ID
         };
             String where = " "+_ID+" = ? ";
 
@@ -105,8 +129,33 @@ public class GraphNodeDAO extends GenericDAO{
                 null,
                 sortOrder
         );
-        return graphNode.getId();
-        List<GraphNode> graphNode = getGraphNOdes(cursor, context);
-        return getGraphNOde.get(0):null;
+        List<GraphNode> graphNodes = getGraphNodes(cursor, context);
+        return graphNodes.size()!=0?graphNodes.get(0):null;
 	}
+
+    public GraphNode getGraph() {
+        String[] projection = {
+                _ID,
+                COLUMN_NAME_LOCATION,
+        };
+        String where = "";
+
+        String[] whereValues = null;
+
+        String sortOrder = null;
+
+        Cursor cursor = db.query(
+                TABLE_NAME,
+                projection,
+                where,
+                whereValues,
+                null,
+                null,
+                sortOrder,
+                "1"
+        );
+        List<GraphNode> graphNodes = getGraphNodes(cursor, context);
+        return graphNodes.size()!=0?graphNodes.get(0):null;
+    }
+
 }

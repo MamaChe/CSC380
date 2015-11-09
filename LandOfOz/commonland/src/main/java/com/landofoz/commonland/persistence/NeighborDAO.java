@@ -7,7 +7,11 @@ import android.database.SQLException;
 import android.provider.BaseColumns;
 
 import com.landofoz.commonland.domain.GraphNode;
+import com.landofoz.commonland.domain.Neighbor;
 import com.landofoz.commonland.domain.Location;
+
+import java.util.ArrayList;
+import java.util.List;
 
 //import java.util.ArrayList;
 //import java.util.List;
@@ -20,69 +24,71 @@ public class NeighborDAO extends GenericDAO{
 
     Context context;
 
-    private static final String SQL_CREATE = "CREATE TABLE " + NEIGHBORS_TABLE_NAME + " (" +
+    private static final String SQL_CREATE = "CREATE TABLE " + TABLE_NAME + " (" +
             _ID + " INTEGER PRIMARY KEY AUTOINCREMENT," +
             COLUMN_NAME_NODE_ID + INTEGER_TYPE + COMMA_SEP +
             COLUMN_NAME_NEIGHBOR_ID + INTEGER_TYPE + COMMA_SEP +
             " )";
 
-    public GraphNodeDAO(Context context) {
+    public NeighborDAO(Context context) {
         super(context, TABLE_NAME, SQL_CREATE);
-        try {
-            db.execSQL(SQL_CREATE_NEIGHBORS);
-        } catch(SQLException e) {
-            System.out.println(e.getStackTrace());
-        }
         this.context = context;
     }
 
     public static ContentValues getContentValues(Neighbor neighbor){
         ContentValues values = new ContentValues();
-         values.put(COLUMN_NAME_LOCATION, graphNode.getLocation());
-         values.put(COLUMN_NAME_NEIGHBORS, graphNode.getNeighbors());
-         values.put(_ID, graphNode.getId());
+         values.put(COLUMN_NAME_NODE_ID, neighbor.getId());
+         values.put(COLUMN_NAME_NEIGHBOR_ID, neighbor.getNeighbor().getId());
+         values.put(_ID, neighbor.getId());
         return values;
     }
 
-    public boolean insert(GraphNode graphNode){
-    	 return super.insert(getContentValues(graphNode));
+    public long insert(Neighbor neighbor){
+    	 return super.insert(getContentValues(neighbor));
     }
 
-    public boolean remove(GraphNode graphNode){
-    	 return super.remove(getContentValues(graphNode));
+    public boolean remove(Long neighbor_id){
+    	 return super.remove(neighbor_id);
     }
 
-    public boolean update(long id,GraphNode graphNode){
-    	return super.update(graphNode.getId(), getContentValues(graphNode));
+    public boolean update(long id,Neighbor neighbor){
+    	return super.update(neighbor.getId(), getContentValues(neighbor));
     }
-    private List<GraphNode> getGraphNOdes(Cursor cursor, Context context) {
-        List<GraphNode> graphNodes = new ArrayList<GraphNode>();
-        GraphNode graphNode;
-        Location location;
-        LocationDAO locationDAO = new LocationDAO(context);
+    
+    private List<Neighbor> getNeighbors(Cursor cursor, Context context) {
+        List<Neighbor> neighbors = new ArrayList<Neighbor>();
+        GraphNode node;
+        GraphNode neighborGraph;
+        Neighbor neighbor;
+        GraphNodeDAO graphNodeDao = new GraphNodeDAO(context);
         if(cursor.getCount()>0) {
             cursor.moveToFirst();
             do {
-                graphNode = new GraphNode();
-                graphNode.setId(cursor.getLong(cursor.getColumnIndexOrThrow(_ID)));
-                long graphNode_id = cursor.getLong(cursor.getColumnIndexOrThrow(COLUMN_NAME_GRAPHNODE_ID));
-                graphNode = GraphNodeDAO.findById(graphNode_id);
-                graphNode.setLocation(graphNode);
-                graphNode.setName(cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_NAME_NAME)));
-                graphNodes.add(graphNode);
+                neighbor = new Neighbor();
+
+                long node_id = cursor.getLong(cursor.getColumnIndexOrThrow(COLUMN_NAME_NODE_ID));
+                long neighbor_id = cursor.getLong(cursor.getColumnIndexOrThrow(COLUMN_NAME_NEIGHBOR_ID));
+
+                node = graphNodeDao.findById(node_id);
+                neighborGraph = graphNodeDao.findById(neighbor_id);
+
+                neighbor.setNode(node);
+                neighbor.setNeighbor(neighborGraph);
+                neighbor.setId(cursor.getLong(cursor.getColumnIndexOrThrow(_ID)));
+
+                neighbors.add(neighbor);
             } while (cursor.moveToNext());
         }
-        return graphNodes;
+        return neighbors;
     }
 
 
-    public void findbyid(long id, GraphNode graphNode) {
+    public Neighbor findbyid(long id, Neighbor neighbor) {
 
 		      String[] projection = {
                 _ID,
-                COLUMN_NAME_LOCATION,
-                COLUMN_NAME_NEIGHBORS,
-                COLUMN_NAME_ID
+                COLUMN_NAME_NODE_ID,
+                COLUMN_NAME_NEIGHBOR_ID,
         };
             String where = " "+_ID+" = ? ";
 
@@ -91,6 +97,32 @@ public class NeighborDAO extends GenericDAO{
             String sortOrder = null;
 
             Cursor cursor = db.query(
+                    TABLE_NAME,
+                    projection,
+                    where,
+                    whereValues,
+                    null,
+                    null,
+                    sortOrder
+            );
+
+        List<Neighbor> neighbors = getNeighbors(cursor, context);
+        return neighbors.size()!=0?neighbors.get(0):null;
+	}
+
+    public List<Long> findNeighborsByNode(long node_id) {
+        String[] projection = {
+                _ID,
+                COLUMN_NAME_NODE_ID,
+                COLUMN_NAME_NEIGHBOR_ID,
+        };
+        String where = " "+COLUMN_NAME_NODE_ID+" = ? ";
+
+        String[] whereValues = {Long.toString(node_id)};
+
+        String sortOrder = null;
+
+        Cursor cursor = db.query(
                 TABLE_NAME,
                 projection,
                 where,
@@ -99,8 +131,12 @@ public class NeighborDAO extends GenericDAO{
                 null,
                 sortOrder
         );
-        return graphNode.getId();
-        List<GraphNode> graphNode = getGraphNOdes(cursor, context);
-        return getGraphNOde.get(0):null;
-	}
+
+        List<Neighbor> neighbors = getNeighbors(cursor, context);
+        List<Long> ids = new ArrayList<>();
+        for (Neighbor n: neighbors) {
+            ids.add(n.getNeighbor().getId());
+        }
+        return ids;
+    }
 }
