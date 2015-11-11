@@ -1,5 +1,7 @@
 package com.landofoz.commonland.navigation;
 
+import android.content.Context;
+
 import com.landofoz.commonland.domain.GraphNode;
 import com.landofoz.commonland.domain.Location;
 import com.landofoz.commonland.persistence.GraphNodeDAO;
@@ -15,8 +17,8 @@ public class Navigator {
 
     GraphNode graph;
 
-    public Navigator() {
-        graph = new GraphNodeDAO().getGraph();
+    public Navigator(Context context) {
+        graph = new GraphNodeDAO(context).getGraph();
     }
 
     public Navigator(GraphNode graph) {
@@ -36,7 +38,9 @@ public class Navigator {
             path.add(origin.getLocation());
         } else {
             for (GraphNode neighbor : origin.getNeighbors()) {
-                if (neighbor.getLocation().getType() == type) {
+                if ((type == Location.ELEVATOR && neighbor.getLocation().getType() != Location.STAIRWAY)
+                        || (type == Location.STAIRWAY && neighbor.getLocation().getType() != Location.ELEVATOR)
+                        || (type != Location.STAIRWAY && type != Location.ELEVATOR)) {
                     path = getBestPathAux(neighbor, destination, type);
                     if (path!=null) {
                         path.add(neighbor.getLocation());
