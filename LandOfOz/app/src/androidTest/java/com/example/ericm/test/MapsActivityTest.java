@@ -101,5 +101,4 @@ public class MapsActivityTest extends ActivityInstrumentationTestCase2<MapsActiv
 
     }
 
-
 }

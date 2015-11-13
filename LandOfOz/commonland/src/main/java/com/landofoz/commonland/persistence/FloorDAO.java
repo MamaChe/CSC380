@@ -69,22 +69,22 @@ public class FloorDAO extends GenericDAO {
 
 		List<Floor> floors = getFloors(cursor, context);
 		return floors.size()==1?floors.get(0):null;
-		
-		private List<Floor> getFloors(Cursor cursor, Context context) {
-			List<Floor> floors = new ArrayList<Floor>();
-			Floor floor;
-			if(cursor.getCount()>0) {
-				cursor.moveToFirst();
-				do {
-					floor = new Floor();
-					floor.setName(cursor.getText(cursor.getColumnIndexOrThrow(COLUMN_NAME_NAME)));
-					floor.setLevel(cursor.getInt(cursor.getColumnIndexOrThrow(COLUMN_NAME_LEVEL)));
-					floors.add(floor);
-				} while (cursor.moveToNext());
-			}
-			return floors;
-		}
-	}
+    }
+
+    private List<Floor> getFloors(Cursor cursor, Context context) {
+        List<Floor> floors = new ArrayList<Floor>();
+        Floor floor;
+        if(cursor.getCount()>0) {
+            cursor.moveToFirst();
+            do {
+                floor = new Floor();
+                floor.setName(cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_NAME_NAME)));
+                floor.setLevel(cursor.getInt(cursor.getColumnIndexOrThrow(COLUMN_NAME_LEVEL)));
+                floors.add(floor);
+            } while (cursor.moveToNext());
+        }
+        return floors;
+    }
 
 }
 
