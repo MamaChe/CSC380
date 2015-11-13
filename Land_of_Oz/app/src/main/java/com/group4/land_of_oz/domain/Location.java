@@ -11,7 +11,10 @@ public class Location extends Persistent {
         REGULAR = 0,
         ELEVATOR = 1,
         STAIRWAY = 2,
-        ENTRANCE = 3;
+        ENTRANCE = 3,
+        BATHROOM = 4,
+        LOUNGE = 5,
+        WATER_FOUNTAIN = 6;
 
     private float longitude;
 
