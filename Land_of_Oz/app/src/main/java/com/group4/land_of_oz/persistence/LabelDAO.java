@@ -4,8 +4,8 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 
-import com.landofoz.commonland.domain.Label;
-import com.landofoz.commonland.domain.Location;
+import com.group4.land_of_oz.domain.Label;
+import com.group4.land_of_oz.domain.Location;
 
 import java.util.ArrayList;
 import java.util.List;
