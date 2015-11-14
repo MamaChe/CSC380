@@ -19,7 +19,7 @@ import java.util.List;
  * Created by ace on 10/15/15.
  */
 public class MapViewGroup extends RelativeLayout implements Gui, ScaleGestureDetector.OnScaleGestureListener {
-    float downX, downY, trueDownY;
+    float downX, downY, trueDownY, spaceForEach = 0;
     boolean rotated = false, zoomedOut = true, isClick = false, isScalingMotion = false;
     int activeLayer;
     ScaleGestureDetector scaleGestureDetector;
@@ -83,11 +83,14 @@ public class MapViewGroup extends RelativeLayout implements Gui, ScaleGestureDet
     public void updateLayerinGui(){
         Resources res = getResources();
         ((TextView) getRootView().findViewById(R.id.floorTextView)).setText(res.getStringArray(R.array.floors_array)[getChildCount() - activeLayer - 1]);
-        float proportionalScroll = getScrollY()
         if(rotated) {
             for (int i = 0; i < getChildCount(); i++) {
-                float relativeScale =
+                View view = getChildAt(i);
+                float relativeScale = Math.max(1, (float)1.05 - Math.abs((getScrollY()-(getChildCount() - i - 1)*spaceForEach)/(spaceForEach*getChildCount())));
+                view.setScaleX(relativeScale * MapView.rotationXScale);
+                view.setScaleY(relativeScale * MapView.rotationYScale);
             }
+            //System.out.println(getScrollY());
         }
     }
 
@@ -174,6 +177,9 @@ public class MapViewGroup extends RelativeLayout implements Gui, ScaleGestureDet
                     downY = trueDownY = event.getY();
                     downX = event.getX();
                     isClick = true;
+                    if(spaceForEach == (float)0.0){
+                        spaceForEach = (float) Math.cos((double) MapView.rotationAngle) * MapView.rotationYScale * getHeight();
+                    }
                     break;
 
                 case MotionEvent.ACTION_MOVE:
