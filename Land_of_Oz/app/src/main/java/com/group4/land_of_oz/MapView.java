@@ -27,7 +27,7 @@ public class MapView extends ImageView implements View.OnClickListener {
     private static final Paint paint = new Paint();
     private Path path = new Path();
     public AnimatorSet rotate;
-    public static final float rotationAngle = 26, rotationYScale = (float).5;
+    public static final float rotationAngle = 26, rotationYScale = (float).5, rotationXScale = (float).95;
     public float userScale = 1;
     public MapView(Context context) {
         super(context);
@@ -47,7 +47,7 @@ public class MapView extends ImageView implements View.OnClickListener {
     }
     @Override
     public void onClick(View view){
-        ((MapViewGroup)findViewById(R.id.MapViewGroup)).setActiveLayer(view);
+        ((MapViewGroup)getRootView().findViewById(R.id.MapViewGroup)).setActiveLayer(view);
     }
 
     private void init(){
@@ -57,9 +57,9 @@ public class MapView extends ImageView implements View.OnClickListener {
         paint.setStyle(Paint.Style.STROKE);
         setPivotY(getHeight());
         rotate = new AnimatorSet();
-        float rotationXScale = (float).95;
         rotate.play(ObjectAnimator.ofFloat(this, "rotationX", rotationAngle)).with(ObjectAnimator.ofFloat(this, "scaleY", rotationYScale)).with(ObjectAnimator.ofFloat(this, "scaleX", rotationXScale));
     }
+
     @Override
     public void onDraw(Canvas canvas){
         super.onDraw(canvas);

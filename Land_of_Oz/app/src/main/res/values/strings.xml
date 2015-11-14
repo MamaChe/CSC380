@@ -1,6 +1,13 @@
 <resources>
-    <string name="app_name">Land_of_Oz</string>
-
-    <string name="hello_world">Hello world!</string>
-    <string name="action_settings">Settings</string>
+    <string name="app_name">Land of Oz</string>
+    <string-array name="floors_array">
+        <item>G</item>
+        <item>1</item>
+        <item>2L</item>
+        <item>2U</item>
+        <item>3L</item>
+        <item>3U</item>
+        <item>4L</item>
+        <item>4U</item>
+    </string-array>
 </resources>

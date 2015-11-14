@@ -4,12 +4,14 @@ import android.animation.Animator;
 import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
 import android.content.Context;
+import android.content.res.Resources;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.ScaleGestureDetector;
 import android.view.View;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
 
 import java.util.List;
 
@@ -28,10 +30,12 @@ public class MapViewGroup extends RelativeLayout implements Gui, ScaleGestureDet
      */
     public MapViewGroup(Context context){
         super(context);
+        activeLayer = 0;
         scaleGestureDetector = new ScaleGestureDetector(context, this);
     }
     public MapViewGroup(Context context, AttributeSet attrs){
         super(context, attrs);
+        activeLayer = 0;
         scaleGestureDetector = new ScaleGestureDetector(context, this);
     }
 
@@ -52,8 +56,8 @@ public class MapViewGroup extends RelativeLayout implements Gui, ScaleGestureDet
     }
     public void updateLayerByScroll(){
         float spaceForEach = (float)(Math.cos((double)MapView.rotationAngle) * MapView.rotationYScale * getHeight());
-        int layerShift =Math.round(getScrollY()  / spaceForEach);
-        activeLayer += layerShift;
+        int layerShift = Math.round(getScrollY()  / spaceForEach);
+        activeLayer = layerShift;
     }
     public void unrotate(){
         initializeAnimatorSets();
@@ -76,12 +80,23 @@ public class MapViewGroup extends RelativeLayout implements Gui, ScaleGestureDet
         temp.start();
     }
 
+    public void updateLayerinGui(){
+        Resources res = getResources();
+        ((TextView) getRootView().findViewById(R.id.floorTextView)).setText(res.getStringArray(R.array.floors_array)[getChildCount() - activeLayer - 1]);
+        float proportionalScroll = getScrollY()
+        if(rotated) {
+            for (int i = 0; i < getChildCount(); i++) {
+                float relativeScale =
+            }
+        }
+    }
 
     //Floor Change methods
     public void incrementActiveLayer(){
         if(activeLayer < getChildCount() -1 && !rotated) {
             initializeAnimatorSets();
             activeLayer++;
+            updateLayerinGui();
             unrotate();
         }else{
             float spaceForEach = (float) Math.cos((double) MapView.rotationAngle) * MapView.rotationYScale * getHeight();
@@ -94,6 +109,7 @@ public class MapViewGroup extends RelativeLayout implements Gui, ScaleGestureDet
         if(activeLayer > 0 && !rotated) {
             initializeAnimatorSets();
             activeLayer--;
+            updateLayerinGui();
             unrotate();
         }else{
             float spaceForEach = (float) Math.cos((double) MapView.rotationAngle) * MapView.rotationYScale * getHeight();
@@ -113,12 +129,13 @@ public class MapViewGroup extends RelativeLayout implements Gui, ScaleGestureDet
         float spaceForEach = (float)(Math.cos((double)MapView.rotationAngle) * MapView.rotationYScale * getHeight());
         for(int i = 0; i < getChildCount(); i++){
             ((MapView)getChildAt(i)).initPivots();
-            rotationAnimations[2 * i] = new ObjectAnimator().ofFloat(getChildAt(getChildCount() - i - 1), "translationY", (float) ((i - activeLayer) * spaceForEach - (getHeight() - spaceForEach)/2  ));//the "getChildCount() - i - 1" bit reverses the ordering of the layers. Good candidate for refactoring
+            rotationAnimations[2 * i] = new ObjectAnimator().ofFloat(getChildAt(getChildCount() - i - 1), "translationY", (float) (i * spaceForEach - (getHeight() - spaceForEach)/2  ));//the "getChildCount() - i - 1" bit reverses the ordering of the layers. Good candidate for refactoring
             rotationAnimations[2 * i +1] = ((MapView)getChildAt(getChildCount() - i - 1)).rotate;
         }
         for(int i = 0; i < rotationAnimations.length - 1; i ++){
             rotate.play(rotationAnimations[i]).with(rotationAnimations[i+1]);
         }
+        rotate.play(rotationAnimations[0]).with(new ObjectAnimator().ofInt(this, "scrollY", (int) spaceForEach * activeLayer));
 
         //set undoScroll
         undoScroll.play(ObjectAnimator.ofInt(this, "scrollY", 0));
@@ -164,14 +181,16 @@ public class MapViewGroup extends RelativeLayout implements Gui, ScaleGestureDet
                         float spaceForEach = (float) (Math.cos((double) MapView.rotationAngle) * MapView.rotationYScale * getHeight());
                         scrollByY = (int) (downY - currentY);
                         scrollByX = (int) (downX - currentX);
-                        if ((scrollByY > 0 && scrollByY + getScrollY() < (getChildCount() - 1 - activeLayer) * spaceForEach)//scrolling up
-                                || (scrollByY < 0 && scrollByY + getScrollY() > -1 * activeLayer * spaceForEach)) //scrolling down
+                        if ((scrollByY < 0 && getScrollY() > spaceForEach/3)//scrolling up
+                                || (scrollByY > 0 && getScrollY() < (getChildCount() - 1) * spaceForEach)) //scrolling down
                         {
                             scrollBy(0, scrollByY);
                         }
                         if (scrollByX > 1 || scrollByY > 1) {
                             isClick = false;
                         }
+                        updateLayerByScroll();
+                        updateLayerinGui();
                     } else if (!zoomedOut) {
                         scrollByX = (int) (downX - currentX);
                         scrollByY = (int) (downY - currentY);
@@ -204,6 +223,10 @@ public class MapViewGroup extends RelativeLayout implements Gui, ScaleGestureDet
                             unrotate();
                         }
                     } else if (false) {
+                        rotate();
+                        isClick = false;
+                    }
+                    if(isClick && rotated){
                         rotate();
                         isClick = false;
                     }
