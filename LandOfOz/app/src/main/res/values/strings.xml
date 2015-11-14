@@ -1,6 +1,0 @@
-<resources>
-    <string name="app_name">helloworld</string>
-    <string name="title_activity_maps">Map</string>
-    <string name="find">Find</string>
-    <string name="hint">Professor, room number, class</string>
-</resources>
