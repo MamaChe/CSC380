@@ -1,31 +1,22 @@
 package com.group4.land_of_oz;
 
-import android.annotation.TargetApi;
-import android.os.Build;
-import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.CompoundButton;
 import android.widget.Switch;
 import android.widget.Toast;
 
-import com.group4.land_of_oz.domain.Floor;
-import com.group4.land_of_oz.domain.GraphNode;
 import com.group4.land_of_oz.domain.Location;
 import com.group4.land_of_oz.navigation.Navigator;
-import com.group4.land_of_oz.persistence.GraphNodeDAO;
 import com.group4.land_of_oz.persistence.LabelDAO;
 import com.group4.land_of_oz.persistence.LocationDAO;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 
 public class MainActivity extends AppCompatActivity {
@@ -37,14 +28,14 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         init();
 
-        Switch switch1 = (Switch)findViewById(R.id.switch1);
+        Switch switch1 = (Switch)findViewById(R.id.fitness_switch);
         switch1.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                if (isChecked){
-                    Toast.makeText(getApplicationContext(),"ON",Toast.LENGTH_LONG).show();
-                }else{
-                    Toast.makeText(getApplicationContext(),"OFF",Toast.LENGTH_LONG).show();
+                if (isChecked) {
+                    Toast.makeText(getApplicationContext(), "ON", Toast.LENGTH_LONG).show();
+                } else {
+                    Toast.makeText(getApplicationContext(), "OFF", Toast.LENGTH_LONG).show();
                 }
             }
         });
