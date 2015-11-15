@@ -97,5 +97,12 @@ public class LabelDAO extends GenericDAO {
         List<Label> labels = getLabels(cursor, context);
         return labels.size()==1?labels.get(0):null;
     }
+    public List<String> findAll(){
+        //this is temporary code for testing the autocomplete
+        ArrayList<String> names = new ArrayList<>();
+        names.add("place");
+        names.add("anothe rPlace");
+        return names;
+    }
 
 }

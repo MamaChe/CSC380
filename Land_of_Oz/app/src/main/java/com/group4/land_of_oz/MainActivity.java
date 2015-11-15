@@ -9,6 +9,10 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
+import android.widget.AutoCompleteTextView;
+
+import com.group4.land_of_oz.persistence.LabelDAO;
 
 import java.util.ArrayList;
 import java.util.Map;
@@ -21,6 +25,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        init();
     }
 
 
@@ -72,5 +77,10 @@ public class MainActivity extends AppCompatActivity {
         locations.add(new Location(100, 100, 1));
         locations.add(new Location(300, 100, 1));
         ((MapViewGroup)findViewById(R.id.MapViewGroup)).drawPath(locations);
+    }
+    private void init(){
+        ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, new LabelDAO(this).findAll());
+        ((AutoCompleteTextView)findViewById(R.id.autocomplete_destination)).setAdapter(adapter);
+        ((AutoCompleteTextView)findViewById(R.id.autocomplete_startingPoint)).setAdapter(adapter);
     }
 }

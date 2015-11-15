@@ -22,6 +22,7 @@ public class MapViewGroup extends RelativeLayout implements Gui, ScaleGestureDet
     float downX, downY, trueDownY, spaceForEach = 0;
     boolean rotated = false, zoomedOut = true, isClick = false, isScalingMotion = false;
     int activeLayer;
+    long timeDown;
     ScaleGestureDetector scaleGestureDetector;
     private AnimatorSet rotate, undoScroll;
 
@@ -46,8 +47,12 @@ public class MapViewGroup extends RelativeLayout implements Gui, ScaleGestureDet
             correctedUnrotate();
             rotated = false;
         }else{
+            if(spaceForEach == (float)0.0){
+                spaceForEach = (float) Math.cos((double) MapView.rotationAngle) * MapView.rotationYScale * getHeight();
+            }
             rotate.start();
             rotated = true;
+            updateLayerinGui();
         }
     }
     private void correctedUnrotate(){
@@ -86,7 +91,7 @@ public class MapViewGroup extends RelativeLayout implements Gui, ScaleGestureDet
         if(rotated) {
             for (int i = 0; i < getChildCount(); i++) {
                 View view = getChildAt(i);
-                float relativeScale = Math.max(1, (float)1.05 - Math.abs((getScrollY()-(getChildCount() - i - 1)*spaceForEach)/(spaceForEach*getChildCount())));
+                float relativeScale = Math.max(1, (float)1.08 - Math.abs((getScrollY()-(getChildCount() - i - 1)*spaceForEach)/(spaceForEach*getChildCount())));
                 view.setScaleX(relativeScale * MapView.rotationXScale);
                 view.setScaleY(relativeScale * MapView.rotationYScale);
             }
@@ -176,10 +181,8 @@ public class MapViewGroup extends RelativeLayout implements Gui, ScaleGestureDet
                 case MotionEvent.ACTION_DOWN:
                     downY = trueDownY = event.getY();
                     downX = event.getX();
+                    timeDown = System.nanoTime();
                     isClick = true;
-                    if(spaceForEach == (float)0.0){
-                        spaceForEach = (float) Math.cos((double) MapView.rotationAngle) * MapView.rotationYScale * getHeight();
-                    }
                     break;
 
                 case MotionEvent.ACTION_MOVE:
@@ -232,7 +235,7 @@ public class MapViewGroup extends RelativeLayout implements Gui, ScaleGestureDet
                         rotate();
                         isClick = false;
                     }
-                    if(isClick && rotated){
+                    if(isClick && rotated && System.nanoTime() - timeDown < 150000000){
                         rotate();
                         isClick = false;
                     }
