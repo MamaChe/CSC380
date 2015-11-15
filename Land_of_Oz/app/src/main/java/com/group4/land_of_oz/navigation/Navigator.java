@@ -28,21 +28,23 @@ public class Navigator {
     public List<Location> getBestPath(Location origin, Location destination, int typeOfPreference) {
         GraphNode nodeOrigin = graph.getNodeByLocation(origin);
         GraphNode nodeDestination = graph.getNodeByLocation(destination);
+        GraphNode.resetVisitedTag(graph);
         return getBestPathAux(nodeOrigin, nodeDestination, typeOfPreference);
     }
 
     private List<Location> getBestPathAux(GraphNode origin, GraphNode destination, int typeOfPreferences) {
         List<Location> path = null;
-        if (origin.equals(destination)) {
+        origin.visited = true;
+        if (origin.getId()==destination.getId()) {
             path = new ArrayList<Location>();
             path.add(origin.getLocation());
         } else {
             //first the same floor
             for (GraphNode neighbor : origin.getNeighbors()) {
                 if(neighbor.getLocation().getFloor().getId()==origin.getLocation().getFloor().getId()) {
-                    if ((typeOfPreferences == Location.ELEVATOR && neighbor.getLocation().getType() != Location.STAIRWAY)
+                    if (((typeOfPreferences == Location.ELEVATOR && neighbor.getLocation().getType() != Location.STAIRWAY)
                             || (typeOfPreferences == Location.STAIRWAY && neighbor.getLocation().getType() != Location.ELEVATOR)
-                            || (typeOfPreferences != Location.STAIRWAY && typeOfPreferences != Location.ELEVATOR)) {
+                            || (typeOfPreferences != Location.STAIRWAY && typeOfPreferences != Location.ELEVATOR)) && !neighbor.visited) {
                         path = getBestPathAux(neighbor, destination, typeOfPreferences);
                         if (path != null) {
                             path.add(neighbor.getLocation());
@@ -54,9 +56,9 @@ public class Navigator {
             //and then the rest
             for (GraphNode neighbor : origin.getNeighbors()) {
                 if(neighbor.getLocation().getFloor().getId()!=origin.getLocation().getFloor().getId()) {
-                    if ((typeOfPreferences == Location.ELEVATOR && neighbor.getLocation().getType() != Location.STAIRWAY)
+                    if (((typeOfPreferences == Location.ELEVATOR && neighbor.getLocation().getType() != Location.STAIRWAY)
                             || (typeOfPreferences == Location.STAIRWAY && neighbor.getLocation().getType() != Location.ELEVATOR)
-                            || (typeOfPreferences != Location.STAIRWAY && typeOfPreferences != Location.ELEVATOR)) {
+                            || (typeOfPreferences != Location.STAIRWAY && typeOfPreferences != Location.ELEVATOR))  && !neighbor.visited) {
                         path = getBestPathAux(neighbor, destination, typeOfPreferences);
                         if (path != null) {
                             path.add(neighbor.getLocation());
@@ -72,11 +74,13 @@ public class Navigator {
 
     public List<Location> getBestPath(Location origin, int specialType, int typeOfPreference) {
         GraphNode nodeOrigin = graph.getNodeByLocation(origin);
+        GraphNode.resetVisitedTag(graph);
         return getBestPathAux(nodeOrigin, specialType, typeOfPreference);
     }
 
     private List<Location> getBestPathAux(GraphNode origin, int specialType, int typeOfPreferences) {
         List<Location> path = null;
+        origin.visited = true;
         if (origin.getLocation().getType()==specialType) {
             path = new ArrayList<Location>();
             path.add(origin.getLocation());
@@ -84,9 +88,9 @@ public class Navigator {
             //first the same floor
             for (GraphNode neighbor : origin.getNeighbors()) {
                 if(neighbor.getLocation().getFloor().getId()==origin.getLocation().getFloor().getId()) {
-                    if ((typeOfPreferences == Location.ELEVATOR && neighbor.getLocation().getType() != Location.STAIRWAY)
+                    if (((typeOfPreferences == Location.ELEVATOR && neighbor.getLocation().getType() != Location.STAIRWAY)
                             || (typeOfPreferences == Location.STAIRWAY && neighbor.getLocation().getType() != Location.ELEVATOR)
-                            || (typeOfPreferences != Location.STAIRWAY && typeOfPreferences != Location.ELEVATOR)) {
+                            || (typeOfPreferences != Location.STAIRWAY && typeOfPreferences != Location.ELEVATOR)) && !neighbor.visited) {
                         path = getBestPathAux(neighbor, specialType, typeOfPreferences);
                         if (path != null) {
                             path.add(neighbor.getLocation());
@@ -98,9 +102,9 @@ public class Navigator {
             //and then the rest
             for (GraphNode neighbor : origin.getNeighbors()) {
                 if(neighbor.getLocation().getFloor().getId()!=origin.getLocation().getFloor().getId()) {
-                    if ((typeOfPreferences == Location.ELEVATOR && neighbor.getLocation().getType() != Location.STAIRWAY)
+                    if (((typeOfPreferences == Location.ELEVATOR && neighbor.getLocation().getType() != Location.STAIRWAY)
                             || (typeOfPreferences == Location.STAIRWAY && neighbor.getLocation().getType() != Location.ELEVATOR)
-                            || (typeOfPreferences != Location.STAIRWAY && typeOfPreferences != Location.ELEVATOR)) {
+                            || (typeOfPreferences != Location.STAIRWAY && typeOfPreferences != Location.ELEVATOR)) && !neighbor.visited) {
                         path = getBestPathAux(neighbor, specialType, typeOfPreferences);
                         if (path != null) {
                             path.add(neighbor.getLocation());

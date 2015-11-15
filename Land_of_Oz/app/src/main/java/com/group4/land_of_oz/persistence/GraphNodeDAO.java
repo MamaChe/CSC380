@@ -2,7 +2,6 @@ package com.group4.land_of_oz.persistence;
 
 import android.content.ContentValues;
 import android.content.Context;
-import android.content.res.AssetManager;
 import android.database.Cursor;
 
 import com.group4.land_of_oz.domain.GraphNode;
@@ -76,37 +75,6 @@ public class GraphNodeDAO extends GenericDAO{
         }
 		return super.update(graphNode.getId(), getContentValues(graphNode));
     }
-
-    /*
-    private List<GraphNode> getGraphNodesNotRecursive(Cursor cursor, Context context) {
-        List<GraphNode> graphNodes = new ArrayList<GraphNode>();
-        GraphNode graphNode;
-        Location location;
-        LocationDAO locationDAO = new LocationDAO(context);
-        NeighborDAO neighborsDAO = new NeighborDAO(context);
-        if(cursor.getCount()>0) {
-            cursor.moveToFirst();
-            do {
-                graphNode = new GraphNode();
-                graphNode.setId(cursor.getLong(cursor.getColumnIndexOrThrow(_ID)));
-
-                long location_id = cursor.getLong(cursor.getColumnIndexOrThrow(COLUMN_NAME_LOCATION));
-                location = locationDAO.findById(location_id);
-                graphNode.setLocation(location);
-
-                List<Long> neighbors_id = neighborsDAO.findNeighborsByNode(graphNode.getId());
-                List<GraphNode> neighbors = new ArrayList<>();
-                for (Long id: neighbors_id) {
-                    neighbors.add(findById(id));
-                }
-                graphNode.setNeighbors((ArrayList<GraphNode>) neighbors);
-
-                graphNodes.add(graphNode);
-            } while (cursor.moveToNext());
-        }
-        return graphNodes;
-    }
-*/
 
     private List<GraphNode> getGraphNodes(Cursor cursor, Context context) {
         List<GraphNode> graphNodes = new ArrayList<GraphNode>();
@@ -196,30 +164,46 @@ public class GraphNodeDAO extends GenericDAO{
                 cursor.close();
         }
         //return graphNodes.size()!=0?graphNodes.get(0):null;
-        return graphNodes.size()!=0?getGraph2(graphNodes.get(0)):null;
+        return graphNodes.size()!=0? getGraphAux(graphNodes.get(0)):null;
     }
 
-    public GraphNode getGraph2(GraphNode g){
+
+    /*
+        When I did this method, only me and god knew how it works,
+        now only god knows.
+     */
+    public GraphNode getGraphAux(GraphNode g){
         g.visited = true;
-        List<GraphNode> nei = new ArrayList<>();
+        List<GraphNode> listToRemove = new ArrayList<>();
         for (GraphNode n: g.getNeighbors()) {
-            nei.add(findById(n.getId()));
+            if (!n.visited)
+                listToRemove.add(n);
         }
-        g.setNeighbors((ArrayList<GraphNode>) nei);
+        for (GraphNode n: listToRemove) {
+            g.getNeighbors().remove(n);
+            g.getNeighbors().add(findById(n.getId()));
+        }
+
         for (GraphNode n: g.getNeighbors()) {
-            GraphNode toRemove = null;
+            GraphNode toRemove = null, neighbor =null;
             if(n!=null) {
                 for (GraphNode n2 : n.getNeighbors()) {
-                    if (n2.getId() == g.getId()) {
+                    if (n2.getId() == g.getId() && !n2.visited) {
                         toRemove = n2;
+                        neighbor = n;
                         break;
                     }
                 }
-                n.getNeighbors().remove(toRemove);
-                n.getNeighbors().add(g);
-                if (!n.visited)
-                    getGraph2(n);
             }
+            if(!(neighbor==null || toRemove==null)) {
+                neighbor.getNeighbors().remove(toRemove);
+                neighbor.getNeighbors().add(g);
+            }
+        }
+
+        for (GraphNode n: g.getNeighbors()) {
+            if (n!=null && !n.visited)
+                getGraphAux(n);
         }
         return g;
     }

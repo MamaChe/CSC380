@@ -94,23 +94,7 @@ public class MainActivity extends AppCompatActivity {
         LocationDAO locationDAO = new LocationDAO(getApplicationContext());
         Navigator navigator = new Navigator(getApplicationContext());
         Location l0 = locationDAO.findById(0);
-        Location l2 = locationDAO.findById(2);
-        GraphNodeDAO dao = new GraphNodeDAO(getApplicationContext());
-        GraphNode graphNode = dao.getGraph();
-
-        Location l = new Location();
-        l.setLatitude(1);
-        l.setLongitude(2);
-
-        Floor f = new Floor();
-        f.setLevel(0);
-        f.setId(1231);
-
-        l.setFloor(f);
-
-        long id = locationDAO.insert(l);
-
-        List<Location> list = locationDAO.findAll();
+        Location l2 = locationDAO.findById(1);
 
         List<Location> locationList = navigator.getBestPath(l0, l2, com.group4.land_of_oz.domain.Location.ELEVATOR);
 

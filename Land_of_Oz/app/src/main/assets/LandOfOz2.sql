@@ -1,0 +1,18 @@
+BEGIN TRANSACTION;
+CREATE TABLE "android_metadata" ("locale" TEXT DEFAULT 'en_US');
+INSERT INTO android_metadata VALUES('en_US');
+CREATE TABLE floor (_id , name , level );
+INSERT INTO floor VALUES(0,'Ground InnoW',0);
+CREATE TABLE graphNode (_id, location_id);
+INSERT INTO graphNode VALUES(0,0);
+INSERT INTO graphNode VALUES(1,1);
+CREATE TABLE label (_id, name, location_id);
+INSERT INTO label VALUES(0,'G02A',0);
+INSERT INTO label VALUES(1,'G07',1);
+CREATE TABLE location (_id, latitude, longitude, type, floor_id);
+INSERT INTO location VALUES(0,46,83,0,0);
+INSERT INTO location VALUES(1,86,121,0,0);
+CREATE TABLE neighbor (_id, node_id, neighbor_id);
+INSERT INTO neighbor VALUES(0,0,1);
+INSERT INTO neighbor VALUES(1,1,0);
+COMMIT;

@@ -83,6 +83,7 @@ public class FloorDAO extends GenericDAO {
             cursor.moveToFirst();
             do {
                 floor = new Floor();
+                floor.setId(cursor.getLong(cursor.getColumnIndexOrThrow(_ID)));
                 floor.setName(cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_NAME_NAME)));
                 floor.setLevel(cursor.getInt(cursor.getColumnIndexOrThrow(COLUMN_NAME_LEVEL)));
                 floors.add(floor);

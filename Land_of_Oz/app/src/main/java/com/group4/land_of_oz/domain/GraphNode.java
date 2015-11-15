@@ -35,11 +35,31 @@ public class GraphNode  extends Persistent {
     }
 
     public GraphNode getNodeByLocation(Location origin) {
+        resetVisitedTag(this);
+        return getNodeByLocationAux(origin, this);
+    }
+
+    public GraphNode getNodeByLocationAux(Location origin, GraphNode g) {
+        this.visited = true;
         if(origin.getLatitude() == this.location.getLatitude() && origin.getLongitude() == this.getLocation().getLongitude())
             return this;
         for (GraphNode neighbor: neighbors) {
-            neighbor.getNodeByLocation(origin);
+            if(neighbor!=null && !neighbor.visited)
+                return neighbor.getNodeByLocationAux(origin,neighbor);
         }
         return null;
     }
+
+
+    public static void resetVisitedTag(GraphNode g){
+        g.visited = false;
+        if(g.getNeighbors()!=null && g.getNeighbors().size()>0){
+            for (GraphNode n: g.getNeighbors()) {
+                if(n!= null && n.visited){
+                    resetVisitedTag(n);
+                }
+            }
+        }
+    }
+
 }

@@ -64,7 +64,7 @@ public class LocationDAO extends GenericDAO {
                 location.setLatitude(cursor.getFloat(cursor.getColumnIndexOrThrow(COLUMN_NAME_LATITUDE)));
                 location.setLongitude(cursor.getFloat(cursor.getColumnIndexOrThrow(COLUMN_NAME_LONGITUDE)));
                 location.setType(cursor.getInt(cursor.getColumnIndexOrThrow(COLUMN_NAME_TYPE)));
-                location.setFloor(floorDAO.findFloorByID(cursor.getLong(cursor.getColumnIndexOrThrow(_ID))));
+                location.setFloor(floorDAO.findFloorByID(cursor.getLong(cursor.getColumnIndexOrThrow(COLUMN_NAME_FLOOR_ID))));
                 locations.add(location);
             } while (cursor.moveToNext());
         }
@@ -134,7 +134,7 @@ public class LocationDAO extends GenericDAO {
                     null,
                     sortOrder
             );
-            getLocations(cursor, context);
+            locations = getLocations(cursor, context);
         } finally {
             if (cursor != null)
                 cursor.close();
