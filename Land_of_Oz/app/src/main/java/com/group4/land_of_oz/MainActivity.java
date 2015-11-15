@@ -87,7 +87,7 @@ public class MainActivity extends AppCompatActivity {
         Location l0 = locationDAO.findById(0);
         Location l2 = locationDAO.findById(1);
 
-        List<Location> locationList = navigator.getBestPath(l0, l2, com.group4.land_of_oz.domain.Location.ELEVATOR);
+        List<Location> locationList = navigator.getBestPath(l0, 4, Location.STAIRWAY);
 
         ((MapViewGroup)findViewById(R.id.MapViewGroup)).drawPath(locationList);
     }
