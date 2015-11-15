@@ -2,6 +2,7 @@ package com.group4.land_of_oz.persistence;
 
 import android.content.ContentValues;
 import android.content.Context;
+import android.content.res.AssetManager;
 import android.database.Cursor;
 
 import com.group4.land_of_oz.domain.GraphNode;
@@ -23,7 +24,7 @@ public class GraphNodeDAO extends GenericDAO{
 
     private static final String SQL_CREATE = "CREATE TABLE " + TABLE_NAME + " (" +
             _ID + " INTEGER PRIMARY KEY AUTOINCREMENT," +
-            COLUMN_NAME_LOCATION + INTEGER_TYPE + COMMA_SEP +
+            COLUMN_NAME_LOCATION + INTEGER_TYPE +
             " )";
 
     public GraphNodeDAO(Context context) {
@@ -71,12 +72,13 @@ public class GraphNodeDAO extends GenericDAO{
         NeighborDAO neighborDao = new NeighborDAO(context);
         List<Neighbor> neighbors = getNeighbors(graphNode);
         for (Neighbor n: neighbors) {
-            neighborDao.update(n.getId(),n);
+            neighborDao.update(n.getId(), n);
         }
 		return super.update(graphNode.getId(), getContentValues(graphNode));
     }
 
-    private List<GraphNode> getGraphNodes(Cursor cursor, Context context) {
+    /*
+    private List<GraphNode> getGraphNodesNotRecursive(Cursor cursor, Context context) {
         List<GraphNode> graphNodes = new ArrayList<GraphNode>();
         GraphNode graphNode;
         Location location;
@@ -104,6 +106,32 @@ public class GraphNodeDAO extends GenericDAO{
         }
         return graphNodes;
     }
+*/
+
+    private List<GraphNode> getGraphNodes(Cursor cursor, Context context) {
+        List<GraphNode> graphNodes = new ArrayList<GraphNode>();
+        GraphNode graphNode;
+        Location location;
+        LocationDAO locationDAO = new LocationDAO(context);
+        NeighborDAO neighborsDAO = new NeighborDAO(context);
+        if(cursor.getCount()>0) {
+            cursor.moveToFirst();
+            do {
+                graphNode = new GraphNode();
+                graphNode.setId(cursor.getLong(cursor.getColumnIndexOrThrow(_ID)));
+
+                long location_id = cursor.getLong(cursor.getColumnIndexOrThrow(COLUMN_NAME_LOCATION));
+                location = locationDAO.findById(location_id);
+                graphNode.setLocation(location);
+
+                List<GraphNode> neighbors = neighborsDAO.findNeighborsByNode(graphNode.getId());
+                graphNode.setNeighbors((ArrayList<GraphNode>) neighbors);
+
+                graphNodes.add(graphNode);
+            } while (cursor.moveToNext());
+        }
+        return graphNodes;
+    }
 
 
     public GraphNode findById(long id) {
@@ -112,24 +140,32 @@ public class GraphNodeDAO extends GenericDAO{
                 _ID,
                 COLUMN_NAME_LOCATION,
         };
-            String where = " "+_ID+" = ? ";
+        String where = _ID+" = "+Long.toString(id);
 
-            String[] whereValues = {Long.toString(id)};
+        String[] whereValues = null;
 
             String sortOrder = null;
 
-            Cursor cursor = db.query(
-                TABLE_NAME,
-                projection,
-                where,
-                whereValues,
-                null,
-                null,
-                sortOrder
-        );
-        List<GraphNode> graphNodes = getGraphNodes(cursor, context);
+        Cursor cursor = null;
+        List<GraphNode> graphNodes;
+        try {
+            cursor = db.query(
+                    TABLE_NAME,
+                    projection,
+                    where,
+                    whereValues,
+                    null,
+                    null,
+                    sortOrder
+            );
+            graphNodes = getGraphNodes(cursor, context);
+        } finally {
+            if (cursor != null)
+                cursor.close();
+        }
         return graphNodes.size()!=0?graphNodes.get(0):null;
 	}
+
 
     public GraphNode getGraph() {
         String[] projection = {
@@ -142,18 +178,50 @@ public class GraphNodeDAO extends GenericDAO{
 
         String sortOrder = null;
 
-        Cursor cursor = db.query(
-                TABLE_NAME,
-                projection,
-                where,
-                whereValues,
-                null,
-                null,
-                sortOrder,
-                "1"
-        );
-        List<GraphNode> graphNodes = getGraphNodes(cursor, context);
-        return graphNodes.size()!=0?graphNodes.get(0):null;
+        Cursor cursor = null;
+        List<GraphNode> graphNodes;
+        try {
+            cursor = db.query(
+                    TABLE_NAME,
+                    projection,
+                    where,
+                    whereValues,
+                    null,
+                    null,
+                    sortOrder
+            );
+            graphNodes = getGraphNodes(cursor, context);
+        } finally {
+            if (cursor != null)
+                cursor.close();
+        }
+        //return graphNodes.size()!=0?graphNodes.get(0):null;
+        return graphNodes.size()!=0?getGraph2(graphNodes.get(0)):null;
+    }
+
+    public GraphNode getGraph2(GraphNode g){
+        g.visited = true;
+        List<GraphNode> nei = new ArrayList<>();
+        for (GraphNode n: g.getNeighbors()) {
+            nei.add(findById(n.getId()));
+        }
+        g.setNeighbors((ArrayList<GraphNode>) nei);
+        for (GraphNode n: g.getNeighbors()) {
+            GraphNode toRemove = null;
+            if(n!=null) {
+                for (GraphNode n2 : n.getNeighbors()) {
+                    if (n2.getId() == g.getId()) {
+                        toRemove = n2;
+                        break;
+                    }
+                }
+                n.getNeighbors().remove(toRemove);
+                n.getNeighbors().add(g);
+                if (!n.visited)
+                    getGraph2(n);
+            }
+        }
+        return g;
     }
 
 }

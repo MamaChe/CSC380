@@ -2,6 +2,7 @@ package com.group4.land_of_oz.persistence;
 
 import android.content.ContentValues;
 import android.content.Context;
+import android.content.res.AssetManager;
 import android.database.Cursor;
 
 import com.group4.land_of_oz.domain.Label;
@@ -76,33 +77,36 @@ public class LabelDAO extends GenericDAO {
                 COLUMN_NAME_LOCATION_ID
         };
 
-        String where = " "+_ID+" = ? ";
+        String where = _ID+" = "+Long.toString(id);
 
-        String[] whereValues = {Long.toString(id)};
+        String[] whereValues = null;
 
 // How you want the results sorted in the resulting Cursor
         String sortOrder = null;
         // _ID + " DESC";
 
-        Cursor cursor = db.query(
-                TABLE_NAME,  // The table to query
-                projection,                               // The columns to return
-                where,                                // The columns for the WHERE clause
-                whereValues,                            // The values for the WHERE clause
-                null,                                     // don't group the rows
-                null,                                     // don't filter by row groups
-                sortOrder                                 // The sort order
-        );
+        Cursor cursor = null;
+        List<Label> labels;
+        try {
+            cursor = db.query(
+                    TABLE_NAME,
+                    projection,
+                    where,
+                    whereValues,
+                    null,
+                    null,
+                    sortOrder
+            );
+            labels = getLabels(cursor, context);
+        } finally {
+            if (cursor != null)
+                cursor.close();
+        }
 
-        List<Label> labels = getLabels(cursor, context);
         return labels.size()==1?labels.get(0):null;
     }
-    public List<String> findAll(){
-        //this is temporary code for testing the autocomplete
-        ArrayList<String> names = new ArrayList<>();
-        names.add("place");
-        names.add("anothe rPlace");
-        return names;
-    }
 
+    public List<String> findAll() {
+        return null;
+    }
 }

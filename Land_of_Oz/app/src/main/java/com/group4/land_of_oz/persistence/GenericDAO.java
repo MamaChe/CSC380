@@ -2,15 +2,23 @@ package com.group4.land_of_oz.persistence;
 
 import android.content.ContentValues;
 import android.content.Context;
+import android.content.res.AssetManager;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
+import android.database.sqlite.SQLiteException;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.provider.BaseColumns;
+
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 
 /**
  * Created by ericm on 10/21/2015.
  */
-public abstract class GenericDAO extends SQLiteOpenHelper implements BaseColumns {
+public abstract class GenericDAO implements BaseColumns {
 
     protected static final String TEXT_TYPE = " TEXT";
     protected static final String INTEGER_TYPE = " INTEGER";
@@ -20,40 +28,22 @@ public abstract class GenericDAO extends SQLiteOpenHelper implements BaseColumns
     protected String SQL_DELETE_ENTRIES;
     private String TABLE_NAME;
     protected SQLiteDatabase db;
+    protected Context context;
+    protected static String _ID = "_id";
+    protected DatabaseHelper dbHelper;
 
-    // If you change the database schema, you must increment the database version.
-    public static final int DATABASE_VERSION = 1;
-    public static final String DATABASE_NAME = "LandOfOz.db";
 
     public GenericDAO(Context context, String TABLE_NAME, String SQL_CREATE_ENTRIES) {
-        super(context, DATABASE_NAME, null, DATABASE_VERSION);
+        db = DatabaseHelper.getInstance(context).getDatabase();
+        constructorHelper(context, TABLE_NAME, SQL_CREATE_ENTRIES);
+    }
+
+    public void constructorHelper(Context context, String TABLE_NAME, String SQL_CREATE_ENTRIES) {
         this.TABLE_NAME = TABLE_NAME;
         SQL_DELETE_ENTRIES =
                 "DROP TABLE IF EXISTS " + TABLE_NAME;
         this.SQL_CREATE_ENTRIES = SQL_CREATE_ENTRIES;
-        db = this.getWritableDatabase();
-        try {
-            db.execSQL(SQL_CREATE_ENTRIES);
-        } catch(SQLException e) {
-            System.out.println(e.getStackTrace());
-        }
-    }
-
-    @Override
-    public void onCreate(SQLiteDatabase db) {
-        //db.execSQL(SQL_CREATE_ENTRIES);
-    }
-
-    @Override
-    public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-        // for data used as a cache for online data its upgrade policy is
-        // to simply to discard the data and start over
-        db.execSQL(SQL_DELETE_ENTRIES);
-        onCreate(db);
-    }
-
-    public void onDowngrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-        onUpgrade(db, oldVersion, newVersion);
+        this.context = context;
     }
 
     protected long insert(ContentValues values) {
@@ -86,5 +76,6 @@ public abstract class GenericDAO extends SQLiteOpenHelper implements BaseColumns
         String[] selectionArgs = {String.valueOf(id)};
         return db.delete(TABLE_NAME, selection, selectionArgs) > 0;
     }
+
 
 }

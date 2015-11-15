@@ -13,6 +13,8 @@ import android.view.View;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.group4.land_of_oz.domain.Location;
+
 import java.util.List;
 
 /**
@@ -287,14 +289,14 @@ public class MapViewGroup extends RelativeLayout implements Gui, ScaleGestureDet
         for(int i = 0; i < getChildCount(); i++){
             ((MapView)getChildAt(i)).resetPath();
         }
-        ((MapView)getChildAt(source.getFloor())).setPathStart(source);
+        ((MapView)getChildAt(source.getFloor().getLevel())).setPathStart(source);
         for(int i = 1; i < locations.size();i ++){
             sink = locations.get(i);
             if(source.getFloor() == sink.getFloor()){
-                ((MapView)getChildAt(source.getFloor())).drawPath(sink);
+                ((MapView)getChildAt(source.getFloor().getLevel())).drawPath(sink);
             }else{
 
-                ((MapView)getChildAt(sink.getFloor())).setPathStart(sink);
+                ((MapView)getChildAt(sink.getFloor().getLevel())).setPathStart(sink);
             }
             source = sink;
         }

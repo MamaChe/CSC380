@@ -1,5 +1,7 @@
 package com.group4.land_of_oz;
 
+import com.group4.land_of_oz.domain.Location;
+
 import java.util.List;
 
 /**

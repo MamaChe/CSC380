@@ -82,7 +82,7 @@ public class LocationDAO extends GenericDAO {
                 COLUMN_NAME_FLOOR_ID
         };
 
-        String whereColumn = " "+COLUMN_NAME_TYPE+"=? ";
+        String whereColumn = " "+COLUMN_NAME_TYPE+"= ? ";
 
         String[] whereValues = {Integer.toString(type)};
 
@@ -90,20 +90,61 @@ public class LocationDAO extends GenericDAO {
         String sortOrder = null;
                // _ID + " DESC";
 
-        Cursor cursor = db.query(
-                TABLE_NAME,  // The table to query
-                projection,                               // The columns to return
-                whereColumn,                                // The columns for the WHERE clause
-                whereValues,                            // The values for the WHERE clause
-                null,                                     // don't group the rows
-                null,                                     // don't filter by row groups
-                sortOrder                                 // The sort order
-        );
+        Cursor cursor = null;
+        try {
+            cursor = db.query(
+                    TABLE_NAME,
+                    projection,
+                    whereColumn,
+                    whereValues,
+                    null,
+                    null,
+                    sortOrder
+            );
+        } finally {
+            if (cursor != null)
+                cursor.close();
+        }
 
         return getLocations(cursor, context);
     }
 
     public Location findById(long id){
+// Define a projection that specifies which columns from the database
+// you will actually use after this query.
+        String[] projection = null;
+
+        String where = _ID+" = "+Long.toString(id);
+
+        String[] whereValues = null;
+
+// How you want the results sorted in the resulting Cursor
+        String sortOrder = null;
+        // _ID + " DESC";
+
+        Cursor cursor = null;
+        List<Location> locations = null;
+        try {
+            cursor = db.query(
+                    TABLE_NAME,
+                    projection,
+                    where,
+                    whereValues,
+                    null,
+                    null,
+                    sortOrder
+            );
+            getLocations(cursor, context);
+        } finally {
+            if (cursor != null)
+                cursor.close();
+        }
+
+        return locations!=null&&locations.size()>0?locations.get(0):null;
+    }
+
+
+    public List<Location> findAll(){
 // Define a projection that specifies which columns from the database
 // you will actually use after this query.
         String[] projection = {
@@ -114,26 +155,33 @@ public class LocationDAO extends GenericDAO {
                 COLUMN_NAME_FLOOR_ID
         };
 
-        String where = " "+_ID+" = ? ";
+        String where = "";
 
-        String[] whereValues = {Long.toString(id)};
+        String[] whereValues = null;
 
 // How you want the results sorted in the resulting Cursor
         String sortOrder = null;
         // _ID + " DESC";
 
-        Cursor cursor = db.query(
-                TABLE_NAME,  // The table to query
-                projection,                               // The columns to return
-                where,                                // The columns for the WHERE clause
-                whereValues,                            // The values for the WHERE clause
-                null,                                     // don't group the rows
-                null,                                     // don't filter by row groups
-                sortOrder                                 // The sort order
-        );
+        Cursor cursor = null;
+        List<Location> locations;
+        try {
+            cursor = db.query(
+                    TABLE_NAME,
+                    projection,
+                    where,
+                    whereValues,
+                    null,
+                    null,
+                    sortOrder
+            );
+            locations = getLocations(cursor, context);
+        } finally {
+            if (cursor != null)
+                cursor.close();
+        }
 
-        List<Location> locations = getLocations(cursor, context);
-        return locations.size()==1?locations.get(0):null;
+        return locations.size()>0?locations:null;
     }
 
 }

@@ -24,7 +24,7 @@ public class NeighborDAO extends GenericDAO{
     private static final String SQL_CREATE = "CREATE TABLE " + TABLE_NAME + " (" +
             _ID + " INTEGER PRIMARY KEY AUTOINCREMENT," +
             COLUMN_NAME_NODE_ID + INTEGER_TYPE + COMMA_SEP +
-            COLUMN_NAME_NEIGHBOR_ID + INTEGER_TYPE + COMMA_SEP +
+            COLUMN_NAME_NEIGHBOR_ID + INTEGER_TYPE +
             " )";
 
     public NeighborDAO(Context context) {
@@ -57,7 +57,6 @@ public class NeighborDAO extends GenericDAO{
         GraphNode node;
         GraphNode neighborGraph;
         Neighbor neighbor;
-        GraphNodeDAO graphNodeDao = new GraphNodeDAO(context);
         if(cursor.getCount()>0) {
             cursor.moveToFirst();
             do {
@@ -66,8 +65,11 @@ public class NeighborDAO extends GenericDAO{
                 long node_id = cursor.getLong(cursor.getColumnIndexOrThrow(COLUMN_NAME_NODE_ID));
                 long neighbor_id = cursor.getLong(cursor.getColumnIndexOrThrow(COLUMN_NAME_NEIGHBOR_ID));
 
-                node = graphNodeDao.findById(node_id);
-                neighborGraph = graphNodeDao.findById(neighbor_id);
+                node = new GraphNode();
+                neighborGraph = new GraphNode();
+
+                node.setId(node_id);
+                neighborGraph.setId(neighbor_id);
 
                 neighbor.setNode(node);
                 neighbor.setNeighbor(neighborGraph);
@@ -79,21 +81,22 @@ public class NeighborDAO extends GenericDAO{
         return neighbors;
     }
 
-
-    public Neighbor findbyid(long id, Neighbor neighbor) {
-
-		      String[] projection = {
+    public List<GraphNode> findNeighborsByNode(long node_id) {
+        String[] projection = {
                 _ID,
                 COLUMN_NAME_NODE_ID,
                 COLUMN_NAME_NEIGHBOR_ID,
         };
-            String where = " "+_ID+" = ? ";
+        String where = " "+COLUMN_NAME_NODE_ID+" = "+node_id;
 
-            String[] whereValues = {Long.toString(id)};
+        String[] whereValues = null;
 
-            String sortOrder = null;
+        String sortOrder = null;
 
-            Cursor cursor = db.query(
+        Cursor cursor = null;
+        List<Neighbor> neighbors;
+        try {
+            cursor = db.query(
                     TABLE_NAME,
                     projection,
                     where,
@@ -102,38 +105,17 @@ public class NeighborDAO extends GenericDAO{
                     null,
                     sortOrder
             );
-
-        List<Neighbor> neighbors = getNeighbors(cursor, context);
-        return neighbors.size()!=0?neighbors.get(0):null;
-	}
-
-    public List<Long> findNeighborsByNode(long node_id) {
-        String[] projection = {
-                _ID,
-                COLUMN_NAME_NODE_ID,
-                COLUMN_NAME_NEIGHBOR_ID,
-        };
-        String where = " "+COLUMN_NAME_NODE_ID+" = ? ";
-
-        String[] whereValues = {Long.toString(node_id)};
-
-        String sortOrder = null;
-
-        Cursor cursor = db.query(
-                TABLE_NAME,
-                projection,
-                where,
-                whereValues,
-                null,
-                null,
-                sortOrder
-        );
-
-        List<Neighbor> neighbors = getNeighbors(cursor, context);
-        List<Long> ids = new ArrayList<>();
-        for (Neighbor n: neighbors) {
-            ids.add(n.getNeighbor().getId());
+            neighbors = getNeighbors(cursor, context);
+        } finally {
+            if (cursor != null)
+                cursor.close();
         }
-        return ids;
+
+        List<GraphNode> graphs = new ArrayList<>();
+        for (Neighbor n: neighbors) {
+            graphs.add(n.getNeighbor());
+        }
+        return graphs;
     }
+
 }

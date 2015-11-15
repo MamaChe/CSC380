@@ -12,6 +12,7 @@ public class GraphNode  extends Persistent {
 
     private Location location;
     List<GraphNode> neighbors;
+    public boolean visited = false;
 
     public GraphNode(){
         neighbors = new ArrayList<>();

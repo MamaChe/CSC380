@@ -15,9 +15,16 @@ import android.widget.CompoundButton;
 import android.widget.Switch;
 import android.widget.Toast;
 
+import com.group4.land_of_oz.domain.Floor;
+import com.group4.land_of_oz.domain.GraphNode;
+import com.group4.land_of_oz.domain.Location;
+import com.group4.land_of_oz.navigation.Navigator;
+import com.group4.land_of_oz.persistence.GraphNodeDAO;
 import com.group4.land_of_oz.persistence.LabelDAO;
+import com.group4.land_of_oz.persistence.LocationDAO;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 
@@ -84,14 +91,30 @@ public class MainActivity extends AppCompatActivity {
         }
     }
     public void test(View v){
-        ArrayList<Location> locations = new ArrayList<>();
-        locations.add(new Location(100, 100, 0));
-        locations.add(new Location(600, 100, 0));
-        locations.add(new Location(600, 600, 0));
-        locations.add(new Location(600, 600, 1));
-        locations.add(new Location(100, 100, 1));
-        locations.add(new Location(300, 100, 1));
-        ((MapViewGroup)findViewById(R.id.MapViewGroup)).drawPath(locations);
+        LocationDAO locationDAO = new LocationDAO(getApplicationContext());
+        Navigator navigator = new Navigator(getApplicationContext());
+        Location l0 = locationDAO.findById(0);
+        Location l2 = locationDAO.findById(2);
+        GraphNodeDAO dao = new GraphNodeDAO(getApplicationContext());
+        GraphNode graphNode = dao.getGraph();
+
+        Location l = new Location();
+        l.setLatitude(1);
+        l.setLongitude(2);
+
+        Floor f = new Floor();
+        f.setLevel(0);
+        f.setId(1231);
+
+        l.setFloor(f);
+
+        long id = locationDAO.insert(l);
+
+        List<Location> list = locationDAO.findAll();
+
+        List<Location> locationList = navigator.getBestPath(l0, l2, com.group4.land_of_oz.domain.Location.ELEVATOR);
+
+        ((MapViewGroup)findViewById(R.id.MapViewGroup)).drawPath(locationList);
     }
     private void init(){
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, new LabelDAO(this).findAll());

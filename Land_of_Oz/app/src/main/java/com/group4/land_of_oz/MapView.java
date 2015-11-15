@@ -19,6 +19,8 @@ import android.view.ScaleGestureDetector;
 import android.view.View;
 import android.widget.ImageView;
 
+import com.group4.land_of_oz.domain.Location;
+
 /**
  * Created by ace on 10/15/15.
  */
