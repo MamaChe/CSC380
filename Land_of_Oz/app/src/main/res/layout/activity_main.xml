@@ -88,6 +88,14 @@
             android:layout_alignBaseline="@id/buttonDown"
             android:layout_toRightOf="@id/settings"/>
 
+        <Switch
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Fitness mode"
+            android:id="@+id/switch1"
+            android:layout_centerHorizontal="true"
+            android:layout_below="@+id/autocomplete_destination" />
+
     </RelativeLayout>
     <com.group4.land_of_oz.MapViewGroup
         android:id="@+id/MapViewGroup"

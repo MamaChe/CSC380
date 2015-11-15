@@ -11,6 +11,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
+import android.widget.CompoundButton;
+import android.widget.Switch;
+import android.widget.Toast;
 
 import com.group4.land_of_oz.persistence.LabelDAO;
 
@@ -19,13 +22,25 @@ import java.util.Map;
 
 
 public class MainActivity extends AppCompatActivity {
-    boolean naturalScrolling = false;
+    boolean naturalScrolling = false, fitness= false, handicap = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         init();
+
+        Switch switch1 = (Switch)findViewById(R.id.switch1);
+        switch1.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if (isChecked){
+                    Toast.makeText(getApplicationContext(),"ON",Toast.LENGTH_LONG).show();
+                }else{
+                    Toast.makeText(getApplicationContext(),"OFF",Toast.LENGTH_LONG).show();
+                }
+            }
+        });
     }
 
 
