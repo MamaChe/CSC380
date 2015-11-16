@@ -93,7 +93,7 @@ public class MapViewGroup extends RelativeLayout implements Gui, ScaleGestureDet
         if(rotated) {
             for (int i = 0; i < getChildCount(); i++) {
                 View view = getChildAt(i);
-                float relativeScale = Math.min((float)1.08, Math.max(1, (float)(1.13 - 2 * Math.abs((getScrollY()-(getChildCount() - i - 1)*spaceForEach)/(spaceForEach*getChildCount())))));
+                float relativeScale = Math.min((float) 1.08, Math.max(1, (float) (1.13 - 2 * Math.abs((getScrollY() - (getChildCount() - i - 1) * spaceForEach) / (spaceForEach * getChildCount())))));
                 view.setScaleX(relativeScale * MapView.rotationXScale);
                 view.setScaleY(relativeScale * MapView.rotationYScale);
             }
@@ -292,7 +292,7 @@ public class MapViewGroup extends RelativeLayout implements Gui, ScaleGestureDet
         ((MapView)getChildAt(source.getFloor().getLevel())).setPathStart(source);
         for(int i = 1; i < locations.size();i ++){
             sink = locations.get(i);
-            if(source.getFloor() == sink.getFloor()){
+            if(source.getFloor().getLevel() == sink.getFloor().getLevel()){
                 ((MapView)getChildAt(source.getFloor().getLevel())).drawPath(sink);
             }else{
 

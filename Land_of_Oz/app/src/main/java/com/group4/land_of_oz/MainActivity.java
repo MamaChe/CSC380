@@ -12,10 +12,12 @@ import android.widget.Switch;
 import android.widget.Toast;
 
 import com.group4.land_of_oz.domain.Location;
+import com.group4.land_of_oz.domain.LocationStub;
 import com.group4.land_of_oz.navigation.Navigator;
 import com.group4.land_of_oz.persistence.LabelDAO;
 import com.group4.land_of_oz.persistence.LocationDAO;
 
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -28,14 +30,33 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         init();
 
-        Switch switch1 = (Switch)findViewById(R.id.fitness_switch);
+        final Switch switch1 = (Switch)findViewById(R.id.fitness_switch);
+        final Switch switch2 = (Switch)findViewById(R.id.accessibility_switch);
         switch1.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 if (isChecked) {
                     Toast.makeText(getApplicationContext(), "ON", Toast.LENGTH_LONG).show();
+                    switch2.setChecked(false);
+                    handicap = false;
+                    fitness = true;
                 } else {
                     Toast.makeText(getApplicationContext(), "OFF", Toast.LENGTH_LONG).show();
+                    fitness = false;
+                }
+            }
+        });
+        switch2.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if (isChecked) {
+                    Toast.makeText(getApplicationContext(), "ON", Toast.LENGTH_LONG).show();
+                    switch1.setChecked(false);
+                    fitness = false;
+                    handicap = true;
+                } else {
+                    Toast.makeText(getApplicationContext(), "OFF", Toast.LENGTH_LONG).show();
+                    handicap = false;
                 }
             }
         });
@@ -90,6 +111,23 @@ public class MainActivity extends AppCompatActivity {
         List<Location> locationList = navigator.getBestPath(l0, l2, com.group4.land_of_oz.domain.Location.ELEVATOR);
 
         ((MapViewGroup)findViewById(R.id.MapViewGroup)).drawPath(locationList);
+    }
+    public void drawingTest(View v){
+        ArrayList<Location> locations = new ArrayList<>();
+        locations.add(new LocationStub(111, 80, 1));
+        locations.add(new LocationStub(111, 163, 1));
+        locations.add(new LocationStub(89, 163, 1));
+        locations.add(new LocationStub(66, 162, 1));
+        locations.add(new LocationStub(66, 192, 1));
+        locations.add(new LocationStub(66, 223, 1));
+        locations.add(new LocationStub(98, 228, 1));
+        locations.add(new LocationStub(132, 265, 1));
+        locations.add(new LocationStub(170, 300, 1));
+        locations.add(new LocationStub(201, 313, 1));
+        locations.add(new LocationStub(211, 318, 1));
+        locations.add(new LocationStub(250, 225, 1));
+        locations.add(new LocationStub(291, 124, 1));
+        ((MapViewGroup)findViewById(R.id.MapViewGroup)).drawPath(locations);
     }
     private void init(){
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, new LabelDAO(this).findAll());

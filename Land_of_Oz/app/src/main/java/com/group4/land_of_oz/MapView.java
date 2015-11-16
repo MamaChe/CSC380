@@ -73,7 +73,9 @@ public class MapView extends ImageView implements View.OnClickListener {
         invalidate();
     }
     public void setPathStart(Location start) {
-        path.moveTo(start.getLongitude(), start.getLatitude());
+        float scalingFactor = (float)(getRootView().findViewById(R.id.MapViewGroup).getWidth() / 327.0);
+        int verticleOffset = (int)((getHeight() - 396 * scalingFactor)/2);
+        path.moveTo(start.getLatitude()*scalingFactor, start.getLongitude()*scalingFactor + verticleOffset);
     }
     public void rotate(){
         setPivotY(getHeight());
@@ -105,7 +107,9 @@ public class MapView extends ImageView implements View.OnClickListener {
         setPivotX(getWidth() / 2);
     }
     public void drawPath(Location sink){
-        path.lineTo(sink.getLongitude(), sink.getLatitude());
+        float scalingFactor = (float)(getRootView().findViewById(R.id.MapViewGroup).getWidth() / 327.0);
+        int verticleOffset = (int)((getHeight() - 396 * scalingFactor)/2);
+        path.lineTo(sink.getLatitude()*scalingFactor, sink.getLongitude()*scalingFactor + verticleOffset);
         invalidate();
     }
 }
