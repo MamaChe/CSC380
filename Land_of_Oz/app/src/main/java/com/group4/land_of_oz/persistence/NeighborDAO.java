@@ -117,5 +117,41 @@ public class NeighborDAO extends GenericDAO{
         }
         return graphs;
     }
+    public List<Neighbor> findAll() {
+        // Define a projection that specifies which columns from the database
+// you will actually use after this query.
+        String[] projection = {
+                _ID,
+                COLUMN_NAME_NODE_ID,
+                COLUMN_NAME_NEIGHBOR_ID
+        };
+
+        String where = null;
+
+        String[] whereValues = null;
+
+// How you want the results sorted in the resulting Cursor
+        String sortOrder = null;
+        // _ID + " DESC";
+
+        Cursor cursor = null;
+        List<Neighbor> neighbors;
+        try {
+            cursor = db.query(
+                    TABLE_NAME,
+                    projection,
+                    where,
+                    whereValues,
+                    null,
+                    null,
+                    sortOrder
+            );
+            neighbors = getNeighbors(cursor, context);
+        } finally {
+            if (cursor != null)
+                cursor.close();
+        }
+        return neighbors;
+    }
 
 }

@@ -11,11 +11,14 @@ import android.widget.CompoundButton;
 import android.widget.Switch;
 import android.widget.Toast;
 
+import com.group4.land_of_oz.domain.Label;
 import com.group4.land_of_oz.domain.Location;
 import com.group4.land_of_oz.domain.LocationStub;
+import com.group4.land_of_oz.domain.Neighbor;
 import com.group4.land_of_oz.navigation.Navigator;
 import com.group4.land_of_oz.persistence.LabelDAO;
 import com.group4.land_of_oz.persistence.LocationDAO;
+import com.group4.land_of_oz.persistence.NeighborDAO;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -129,9 +132,9 @@ public class MainActivity extends AppCompatActivity {
         LocationDAO locationDAO = new LocationDAO(getApplicationContext());
         Navigator navigator = new Navigator(getApplicationContext());
         Location l0 = locationDAO.findById(0);
-        Location l2 = locationDAO.findById(1);
+        Location l2 = locationDAO.findById(37);
 
-        List<Location> locationList = navigator.getBestPath(l0, 4, Location.STAIRWAY);
+        List<Location> locationList = navigator.getBestPath(l0, l2, Location.STAIRWAY);
 
         ((MapViewGroup)findViewById(R.id.MapViewGroup)).drawPath(locationList);
     }
@@ -152,9 +155,18 @@ public class MainActivity extends AppCompatActivity {
         locations.add(new LocationStub(291, 124, 1));
         ((MapViewGroup)findViewById(R.id.MapViewGroup)).drawPath(locations);
     }
+    public void illustrateGraph(View v){
+        List<Neighbor>neighbors = new NeighborDAO(getApplicationContext()).findAll();
+        for(Neighbor neighbor: )
+    }
+
     private void init(){
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, new LabelDAO(this).findAll());
         ((AutoCompleteTextView)findViewById(R.id.autocomplete_destination)).setAdapter(adapter);
         ((AutoCompleteTextView)findViewById(R.id.autocomplete_startingPoint)).setAdapter(adapter);
+        System.out.println("Here we are");
+        for(String name: new LabelDAO(this).findAll()){
+            System.out.println(name);
+        }
     }
 }

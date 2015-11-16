@@ -3,7 +3,7 @@ CREATE TABLE "android_metadata" ("locale" TEXT DEFAULT 'en_US');
 INSERT INTO android_metadata VALUES('en_US');
 CREATE TABLE floor (_id , name , level );
 INSERT INTO floor VALUES(0,'Ground InnoW',0);
-INSERT INTO floor VALUES(1,'Ground ObsW',1);
+INSERT INTO floor VALUES(1,'Ground ObsW',0);
 CREATE TABLE graphNode (_id, location_id);
 INSERT INTO graphNode VALUES(0,0);
 INSERT INTO graphNode VALUES(1,1);

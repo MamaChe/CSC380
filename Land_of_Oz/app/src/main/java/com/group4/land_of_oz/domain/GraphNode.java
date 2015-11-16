@@ -40,8 +40,8 @@ public class GraphNode extends Persistent {
     }
 
     public GraphNode getNodeByLocationAux(Location origin, GraphNode g) {
-        g.visited = true;
-        if(origin.getLatitude() == this.location.getLatitude() && origin.getLongitude() == this.getLocation().getLongitude())
+        this.visited = true;
+        if(origin.getId() == this.location.getId())
             return this;
         for (GraphNode neighbor: neighbors) {
             if(neighbor!=null && !neighbor.visited)
