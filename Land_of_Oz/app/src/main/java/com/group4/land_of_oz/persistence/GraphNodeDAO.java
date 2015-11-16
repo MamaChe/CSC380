@@ -167,11 +167,8 @@ public class GraphNodeDAO extends GenericDAO{
         return graphNodes.size()!=0? getGraphAux(graphNodes.get(0)):null;
     }
 
-
-    /*
-        When I did this method, only me and god knew how it works,
-        now only god knows.
-     */
+    //When I wrote this, only God and I understood what I was doing
+    //Now, God only knows
     public GraphNode getGraphAux(GraphNode g){
         g.visited = true;
         List<GraphNode> listToRemove = new ArrayList<>();

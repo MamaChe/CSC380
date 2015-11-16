@@ -107,6 +107,45 @@ public class LabelDAO extends GenericDAO {
     }
 
     public List<String> findAll() {
-        return null;
+        // Define a projection that specifies which columns from the database
+// you will actually use after this query.
+        String[] projection = {
+                _ID,
+                COLUMN_NAME_NAME,
+                COLUMN_NAME_LOCATION_ID
+        };
+
+        String where = null;
+
+        String[] whereValues = null;
+
+// How you want the results sorted in the resulting Cursor
+        String sortOrder = null;
+        // _ID + " DESC";
+
+        Cursor cursor = null;
+        List<Label> labels;
+        try {
+            cursor = db.query(
+                    TABLE_NAME,
+                    projection,
+                    where,
+                    whereValues,
+                    null,
+                    null,
+                    sortOrder
+            );
+            labels = getLabels(cursor, context);
+        } finally {
+            if (cursor != null)
+                cursor.close();
+        }
+
+        List<String> strings = new ArrayList<>();
+        for (Label l:labels) {
+            strings.add(l.getName());
+        }
+
+        return strings;
     }
 }
