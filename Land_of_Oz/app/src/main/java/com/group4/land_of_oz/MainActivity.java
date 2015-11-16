@@ -36,27 +36,38 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 if (isChecked) {
-                    Toast.makeText(getApplicationContext(), "ON", Toast.LENGTH_SHORT).show();
+                    //Toast.makeText(getApplicationContext(), "ON", Toast.LENGTH_SHORT).show();
                     switch2.setChecked(false);
                     handicap = false;
                     fitness = true;
                 } else {
-                    Toast.makeText(getApplicationContext(), "OFF", Toast.LENGTH_SHORT).show();
+                    //Toast.makeText(getApplicationContext(), "OFF", Toast.LENGTH_SHORT).show();
                     fitness = false;
                 }
+                if(fitness){
+                    Toast.makeText(getApplicationContext(), "Fitness mode turned ON", Toast.LENGTH_SHORT).show();
+                }else if(handicap){
+                    Toast.makeText(getApplicationContext(), "Accessibility mode turned ON", Toast.LENGTH_SHORT).show();
+                }
+
             }
         });
         switch2.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 if (isChecked) {
-                    Toast.makeText(getApplicationContext(), "ON", Toast.LENGTH_SHORT).show();
+                    //Toast.makeText(getApplicationContext(), " ", Toast.LENGTH_SHORT).show();
                     switch1.setChecked(false);
                     fitness = false;
                     handicap = true;
                 } else {
-                    Toast.makeText(getApplicationContext(), "OFF", Toast.LENGTH_SHORT).show();
+                    //Toast.makeText(getApplicationContext(), " ", Toast.LENGTH_SHORT).show();
                     handicap = false;
+                }
+                if(fitness){
+                    Toast.makeText(getApplicationContext(), "Fitness mode turned ON", Toast.LENGTH_SHORT).show();
+                }else if(handicap){
+                    Toast.makeText(getApplicationContext(), "Accessibility mode turned ON", Toast.LENGTH_SHORT).show();
                 }
             }
         });
