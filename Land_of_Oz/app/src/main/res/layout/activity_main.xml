@@ -65,7 +65,7 @@
             android:layout_alignBaseline="@id/buttonDown"
             android:layout_toLeftOf="@id/buttonDown"
             android:id="@+id/testButton"
-            android:onClick="test"
+            android:onClick="go"
             />
         <ImageButton
             android:layout_width="wrap_content"

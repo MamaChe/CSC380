@@ -13,6 +13,7 @@ import android.view.View;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.group4.land_of_oz.domain.GraphNode;
 import com.group4.land_of_oz.domain.Location;
 
 import java.util.List;
@@ -296,12 +297,13 @@ public class MapViewGroup extends RelativeLayout implements Gui, ScaleGestureDet
             if(source.getFloor().getLevel() == sink.getFloor().getLevel()){
                 ((MapView)getChildAt(source.getFloor().getLevel())).drawPath(sink);
             }else{
-
                 ((MapView)getChildAt(sink.getFloor().getLevel())).setPathStart(sink);
             }
             source = sink;
         }
     }
 
+    public void illustrateEdge(GraphNode node, GraphNode neighbor){
 
+    }
 }

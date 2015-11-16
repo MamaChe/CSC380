@@ -9,6 +9,7 @@ import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.CompoundButton;
 import android.widget.Switch;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.group4.land_of_oz.domain.Label;
@@ -157,7 +158,9 @@ public class MainActivity extends AppCompatActivity {
     }
     public void illustrateGraph(View v){
         List<Neighbor>neighbors = new NeighborDAO(getApplicationContext()).findAll();
-        for(Neighbor neighbor: )
+        for(Neighbor neighbor: neighbors){
+            ((MapViewGroup)findViewById(R.id.MapViewGroup)).illustrateEdge(neighbor.getNode(), neighbor.getNeighbor());
+        }
     }
 
     private void init(){
@@ -168,5 +171,18 @@ public class MainActivity extends AppCompatActivity {
         for(String name: new LabelDAO(this).findAll()){
             System.out.println(name);
         }
+    }
+    public void go(View v){
+        LabelDAO labelDAO = new LabelDAO(getApplicationContext());
+        Navigator navigator = new Navigator(getApplicationContext());
+        String originName = ((AutoCompleteTextView)findViewById(R.id.autocomplete_startingPoint)).getText().toString();
+        String destinationName = ((AutoCompleteTextView)findViewById(R.id.autocomplete_destination)).getText().toString();
+
+        Location origin = labelDAO.findByName(originName).getLocation();
+        Location destination = labelDAO.findByName(destinationName).getLocation();
+
+        List<Location> locationList = navigator.getBestPath(origin, destination, Location.ELEVATOR);
+
+        ((MapViewGroup)findViewById(R.id.MapViewGroup)).drawPath(locationList);
     }
 }

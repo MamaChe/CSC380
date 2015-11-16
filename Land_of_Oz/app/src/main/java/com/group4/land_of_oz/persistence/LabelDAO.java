@@ -148,4 +148,43 @@ public class LabelDAO extends GenericDAO {
 
         return strings;
     }
+
+
+    public Label findByName(String name){
+// Define a projection that specifies which columns from the database
+// you will actually use after this query.
+        String[] projection = {
+                _ID,
+                COLUMN_NAME_NAME,
+                COLUMN_NAME_LOCATION_ID
+        };
+
+        String where = COLUMN_NAME_NAME+" = "+name;
+
+        String[] whereValues = null;
+
+// How you want the results sorted in the resulting Cursor
+        String sortOrder = null;
+        // _ID + " DESC";
+
+        Cursor cursor = null;
+        List<Label> labels;
+        try {
+            cursor = db.query(
+                    TABLE_NAME,
+                    projection,
+                    where,
+                    whereValues,
+                    null,
+                    null,
+                    sortOrder
+            );
+            labels = getLabels(cursor, context);
+        } finally {
+            if (cursor != null)
+                cursor.close();
+        }
+
+        return labels.size()==1?labels.get(0):null;
+    }
 }
