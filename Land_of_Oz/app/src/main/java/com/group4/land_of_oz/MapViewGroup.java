@@ -55,6 +55,7 @@ public class MapViewGroup extends RelativeLayout implements Gui, ScaleGestureDet
             rotate.start();
             rotated = true;
             updateLayerinGui();
+            invalidate();
         }
     }
     private void correctedUnrotate(){

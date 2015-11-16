@@ -75,7 +75,7 @@
             android:layout_below="@id/buttonR"
             android:contentDescription="settings"
             android:id="@+id/settings"
-            android:onClick="showPopup" />
+            android:onClick="showSettings" />
         <TextView
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
@@ -93,7 +93,8 @@
             android:layout_height="wrap_content"
             android:text="Fitness mode"
             android:id="@+id/fitness_switch"
-            android:layout_centerHorizontal="true"
+            android:visibility="invisible"
+            android:layout_alignRight="@+id/accessibility_switch"
             android:layout_below="@id/autocomplete_destination" />
         <Switch
             android:layout_width="wrap_content"
@@ -101,6 +102,7 @@
             android:text="Accessibility mode"
             android:id="@+id/accessibility_switch"
             android:layout_centerHorizontal="true"
+            android:visibility="invisible"
             android:layout_below="@id/fitness_switch" />
 
     </RelativeLayout>

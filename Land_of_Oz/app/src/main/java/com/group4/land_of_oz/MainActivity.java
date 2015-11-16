@@ -36,12 +36,12 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 if (isChecked) {
-                    Toast.makeText(getApplicationContext(), "ON", Toast.LENGTH_LONG).show();
+                    Toast.makeText(getApplicationContext(), "ON", Toast.LENGTH_SHORT).show();
                     switch2.setChecked(false);
                     handicap = false;
                     fitness = true;
                 } else {
-                    Toast.makeText(getApplicationContext(), "OFF", Toast.LENGTH_LONG).show();
+                    Toast.makeText(getApplicationContext(), "OFF", Toast.LENGTH_SHORT).show();
                     fitness = false;
                 }
             }
@@ -50,16 +50,28 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 if (isChecked) {
-                    Toast.makeText(getApplicationContext(), "ON", Toast.LENGTH_LONG).show();
+                    Toast.makeText(getApplicationContext(), "ON", Toast.LENGTH_SHORT).show();
                     switch1.setChecked(false);
                     fitness = false;
                     handicap = true;
                 } else {
-                    Toast.makeText(getApplicationContext(), "OFF", Toast.LENGTH_LONG).show();
+                    Toast.makeText(getApplicationContext(), "OFF", Toast.LENGTH_SHORT).show();
                     handicap = false;
                 }
             }
         });
+    }
+
+    public void showSettings(View v){
+        Switch handicapSwitch = (Switch)findViewById(R.id.accessibility_switch);
+        Switch fitnessSwitch = (Switch)findViewById(R.id.fitness_switch);
+        if(handicapSwitch.getVisibility() == View.VISIBLE){
+            handicapSwitch.setVisibility(View.INVISIBLE);
+            fitnessSwitch.setVisibility(View.INVISIBLE);
+        }else{
+            handicapSwitch.setVisibility(View.VISIBLE);
+            fitnessSwitch.setVisibility(View.VISIBLE);
+        }
     }
 
 
