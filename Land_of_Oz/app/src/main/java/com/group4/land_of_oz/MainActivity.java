@@ -1,6 +1,7 @@
 package com.group4.land_of_oz;
 
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.support.v7.app.AppCompatActivity;
@@ -8,11 +9,14 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
+import android.widget.EditText;
 import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -31,7 +35,7 @@ import java.util.List;
 
 
 public class MainActivity extends AppCompatActivity {
-    boolean naturalScrolling = false, fitness= false, handicap = false;
+    boolean naturalScrolling = false, fitness= false, handicap = false ;
 
     public static final String PREFS_NAME = "MyPrefsFile1";
     public CheckBox dontShowAgain;
@@ -152,6 +156,7 @@ public class MainActivity extends AppCompatActivity {
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
 
+
         //noinspection SimplifiableIfStatement
        // if (id == R.id.action_settings) {
             return true;
@@ -217,6 +222,7 @@ public class MainActivity extends AppCompatActivity {
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, new LabelDAO(this).findAll());
         ((AutoCompleteTextView)findViewById(R.id.autocomplete_destination)).setAdapter(adapter);
         ((AutoCompleteTextView)findViewById(R.id.autocomplete_startingPoint)).setAdapter(adapter);
+
     }
     public void go(View v){
         LabelDAO labelDAO = new LabelDAO(getApplicationContext());
@@ -230,5 +236,25 @@ public class MainActivity extends AppCompatActivity {
         List<Location> locationList = navigator.getBestPath(origin, destination, Location.ELEVATOR);
 
         ((MapViewGroup)findViewById(R.id.MapViewGroup)).drawPath(locationList);
+
+    }
+    
+    //hide keyboard when any part of the screen other than a text field is touched/clicked
+    @Override
+    public boolean dispatchTouchEvent(final MotionEvent ev) {
+        //check if the touchevent was inside the focus editTexts
+        final View currentFocus = getCurrentFocus();
+        if (!(currentFocus instanceof EditText) || !isTouchInsideView(ev, currentFocus)) {
+            ((InputMethodManager) getApplicationContext().getSystemService(Context.INPUT_METHOD_SERVICE))
+                    .hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
+        }
+        return super.dispatchTouchEvent(ev);
+    }
+       // determine if the given motionevent is inside the given view.
+    private boolean isTouchInsideView(final MotionEvent ev, final View currentFocus) {
+        final int[] loc = new int[2];
+        currentFocus.getLocationOnScreen(loc);
+        return ev.getRawX() > loc[0] && ev.getRawY() > loc[1] && ev.getRawX() < (loc[0] + currentFocus.getWidth())
+                && ev.getRawY() < (loc[1] + currentFocus.getHeight());
     }
 }
