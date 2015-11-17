@@ -1,12 +1,17 @@
 package com.group4.land_of_oz;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
+import android.content.SharedPreferences;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
+import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.Switch;
 import android.widget.TextView;
@@ -28,11 +33,54 @@ import java.util.List;
 public class MainActivity extends AppCompatActivity {
     boolean naturalScrolling = false, fitness= false, handicap = false;
 
+    public static final String PREFS_NAME = "MyPrefsFile1";
+    public CheckBox dontShowAgain;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         init();
+
+        AlertDialog.Builder adb = new AlertDialog.Builder(MainActivity.this);
+        LayoutInflater adbInflater = LayoutInflater.from(MainActivity.this);
+        View eulaLayout = adbInflater.inflate(R.layout.checkbox, null);
+        dontShowAgain = (CheckBox) eulaLayout.findViewById(R.id.skip);
+        adb.setView(eulaLayout);
+        adb.setTitle("Hint");
+        adb.setMessage("Start and Destination can be" +
+                "\n a professor's name,\n" +
+                "Room number or point of interest");
+        adb.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int which) {
+                String checkBoxResult = "NOT checked";
+                if (dontShowAgain.isChecked())
+                    checkBoxResult = "checked";
+                SharedPreferences settings = getSharedPreferences(PREFS_NAME, 0);
+                SharedPreferences.Editor editor = settings.edit();
+                editor.putString("skipMessage", checkBoxResult);
+                // Commit the edits!
+                editor.commit();
+            }
+        });
+
+        adb.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int which) {
+                String checkBoxResult = "NOT checked";
+                if (dontShowAgain.isChecked())
+                    checkBoxResult = "checked";
+                SharedPreferences settings = getSharedPreferences(PREFS_NAME, 0);
+                SharedPreferences.Editor editor = settings.edit();
+                editor.putString("skipMessage", checkBoxResult);
+                // Commit the edits!
+                editor.commit();
+            }
+        });
+        SharedPreferences settings = getSharedPreferences(PREFS_NAME, 0);
+        String skipMessage = settings.getString("skipMessage", "NOT checked");
+        if (!skipMessage.equals("checked"))
+            adb.show();
+
 
         final Switch switch1 = (Switch)findViewById(R.id.fitness_switch);
         final Switch switch2 = (Switch)findViewById(R.id.accessibility_switch);
