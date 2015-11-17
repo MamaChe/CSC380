@@ -26,14 +26,15 @@ public class Navigator {
     }
 
     public Navigator(GraphNode graph, Context context) {
-        this.graph = graph;
         graphNodeDAO = new GraphNodeDAO(context);
+        this.graph = graph;
     }
 
     public List<Location> getBestPath(Location origin, Location destination, int typeOfPreference) throws IOException {
         GraphNode nodeOrigin = graph.getNodeByLocation(origin);
         GraphNode nodeDestination = graph.getNodeByLocation(destination);
         GraphNode.resetVisitedTag(graph);
+        if(nodeDestination==null || nodeOrigin==null) return null;
         List<Location> ret = getBestPathAux(nodeOrigin, nodeDestination, typeOfPreference);
         if(ret!=null) Collections.reverse(ret);
         return ret;

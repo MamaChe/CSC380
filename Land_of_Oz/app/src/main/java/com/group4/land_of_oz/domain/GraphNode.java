@@ -41,13 +41,18 @@ public class GraphNode extends Persistent {
 
     public GraphNode getNodeByLocationAux(Location origin) {
         this.visited = true;
+        System.out.println("Access: "+this.getId());
         if(origin.getId() == this.getLocation().getId())
             return this;
+        System.out.println("Size of neighbors: "+neighbors.size());
         for (GraphNode neighbor: neighbors) {
-            if(neighbor!=null && !neighbor.visited)
-                return neighbor.getNodeByLocationAux(origin);
+            if(neighbor!=null && !neighbor.visited){
+                GraphNode node = neighbor.getNodeByLocationAux(origin);
+                if(node!=null)
+                    return node;
+            }
         }
-        if(origin!=null) System.out.println("End line: "+this.getId());
+        System.out.println("End line: "+this.getId());
         return null;
     }
 

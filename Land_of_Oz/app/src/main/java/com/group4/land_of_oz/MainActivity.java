@@ -234,15 +234,15 @@ public class MainActivity extends AppCompatActivity {
 
     }
     public void go(View v) throws IOException {
-        /* LabelDAO labelDAO = new LabelDAO(getApplicationContext());
+        LabelDAO labelDAO = new LabelDAO(getApplicationContext());
         Navigator navigator = new Navigator(getApplicationContext());
         String originName = ((AutoCompleteTextView)findViewById(R.id.autocomplete_startingPoint)).getText().toString();
         String destinationName = ((AutoCompleteTextView)findViewById(R.id.autocomplete_destination)).getText().toString();
-*/
-        Navigator navigator = new Navigator(getApplicationContext());
-        LocationDAO dao = new LocationDAO(getApplicationContext());
-        Location origin = dao.findById(1);//labelDAO.findByName(originName).getLocation();
-        Location destination = dao.findById(26);//labelDAO.findByName(destinationName).getLocation();
+
+        //Navigator navigator = new Navigator(getApplicationContext());
+       // LocationDAO dao = new LocationDAO(getApplicationContext());
+        Location origin = labelDAO.findByName(originName).getLocation();
+        Location destination = labelDAO.findByName(destinationName).getLocation();
 
         List<Location> locationList = navigator.getBestPath(origin, destination, Location.ELEVATOR);
         if(locationList!=null)

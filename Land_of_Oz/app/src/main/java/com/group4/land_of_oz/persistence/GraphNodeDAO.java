@@ -158,7 +158,8 @@ public class GraphNodeDAO extends GenericDAO{
                     whereValues,
                     null,
                     null,
-                    sortOrder
+                    sortOrder,
+                    Integer.toString(1)
             );
             graphNodes = getGraphNodes(cursor, context);
         } finally {
