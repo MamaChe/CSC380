@@ -103,7 +103,7 @@ public class LabelDAO extends GenericDAO {
                 cursor.close();
         }
 
-        return labels.size()==1?labels.get(0):null;
+        return labels.size()>0?labels.get(0):null;
     }
 
     public List<String> findAll() {
@@ -185,6 +185,6 @@ public class LabelDAO extends GenericDAO {
                 cursor.close();
         }
 
-        return labels.size()==1?labels.get(0):null;
+        return labels.size()>0?labels.get(0):null;
     }
 }
