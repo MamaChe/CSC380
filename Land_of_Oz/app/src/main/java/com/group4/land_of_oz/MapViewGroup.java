@@ -13,8 +13,11 @@ import android.view.View;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.group4.land_of_oz.domain.Floor;
 import com.group4.land_of_oz.domain.GraphNode;
 import com.group4.land_of_oz.domain.Location;
+import com.group4.land_of_oz.persistence.FloorDAO;
+import com.group4.land_of_oz.persistence.LocationDAO;
 
 import java.util.List;
 
@@ -304,6 +307,32 @@ public class MapViewGroup extends RelativeLayout implements Gui, ScaleGestureDet
     }
 
     public void illustrateEdge(GraphNode node, GraphNode neighbor){
-
+        Location nodeLocation, neighborLocation;
+        LocationDAO locationDAO= new LocationDAO(getContext());
+        nodeLocation = locationDAO.findById(node.getId());
+        neighborLocation= locationDAO.findById(neighbor.getId());
+        if(nodeLocation == null){
+            System.out.println("fuck");
+            return;
+        }
+        if(neighborLocation == null) {
+            System.out.println("shit");
+            return;
+        }
+        if(nodeLocation.getFloor() == null || neighborLocation.getFloor() == null){
+            System.out.println("arse");
+            return;
+        }
+        long nodeLevel = nodeLocation.getFloor().getId();
+        long neighborLevel = neighborLocation.getFloor().getId();
+        if(nodeLevel == neighborLevel){
+            MapView view = (MapView)getChildAt((int)nodeLevel);
+            if(view == null){
+                System.out.println(nodeLevel + "What the fuck" + getChildCount());
+            }else {
+                view.setPathStart(nodeLocation);
+                view.drawPath(neighborLocation);
+            }
+        }
     }
 }

@@ -159,6 +159,7 @@ public class MainActivity extends AppCompatActivity {
     public void illustrateGraph(View v){
         List<Neighbor>neighbors = new NeighborDAO(getApplicationContext()).findAll();
         for(Neighbor neighbor: neighbors){
+            if(neighbor.getNeighbor() != null && neighbor.getNode()!=null)
             ((MapViewGroup)findViewById(R.id.MapViewGroup)).illustrateEdge(neighbor.getNode(), neighbor.getNeighbor());
         }
     }
@@ -167,10 +168,6 @@ public class MainActivity extends AppCompatActivity {
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, new LabelDAO(this).findAll());
         ((AutoCompleteTextView)findViewById(R.id.autocomplete_destination)).setAdapter(adapter);
         ((AutoCompleteTextView)findViewById(R.id.autocomplete_startingPoint)).setAdapter(adapter);
-        System.out.println("Here we are");
-        for(String name: new LabelDAO(this).findAll()){
-            System.out.println(name);
-        }
     }
     public void go(View v){
         LabelDAO labelDAO = new LabelDAO(getApplicationContext());

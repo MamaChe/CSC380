@@ -44,8 +44,8 @@ public class Navigator {
 
     private List<Location> getBestPathAux(GraphNode origin, GraphNode destination, int typeOfPreference) {
         List<Location> ret;
-        origin.visited = true;
         if(origin!=null) {
+            origin.visited = true;
             if (origin.getId() == destination.getId()) {
                 List<Location> found = new ArrayList<>();
                 found.add(origin.getLocation());

@@ -159,7 +159,7 @@ public class LabelDAO extends GenericDAO {
                 COLUMN_NAME_LOCATION_ID
         };
 
-        String where = COLUMN_NAME_NAME+" = "+name;
+        String where = COLUMN_NAME_NAME+" = \""+name+"\"";
 
         String[] whereValues = null;
 

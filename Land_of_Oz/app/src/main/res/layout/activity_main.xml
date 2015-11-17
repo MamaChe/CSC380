@@ -67,6 +67,16 @@
             android:id="@+id/testButton"
             android:onClick="go"
             />
+        <Button
+            style="?android:attr/buttonStyleSmall"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="show"
+            android:layout_alignBaseline="@id/buttonDown"
+            android:layout_toLeftOf="@id/testButton"
+            android:id="@+id/illustrator"
+            android:onClick="illustrateGraph"
+            />
         <ImageButton
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
