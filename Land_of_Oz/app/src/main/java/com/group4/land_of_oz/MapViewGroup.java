@@ -330,7 +330,29 @@ public class MapViewGroup extends RelativeLayout implements Gui, ScaleGestureDet
         long nodeLevel = nodeLocation.getFloor().getId();
         long neighborLevel = neighborLocation.getFloor().getId();
         if(nodeLocation.getFloor().getLevel() == neighborLocation.getFloor().getLevel()) {
-            MapView view = (MapView) getChildAt((int)nodeLevel);
+            MapView view;
+            switch((int)nodeLevel){
+                case(5):
+                    view = (MapView) getChildAt(4);
+                    break;
+                case(4):
+                    view = (MapView) getChildAt(5);
+                    break;
+                case(6):
+                    view = (MapView) getChildAt(7);
+                    break;
+                case(7):
+                    view = (MapView) getChildAt(6);
+                    break;
+                case(3):
+                    view = (MapView) getChildAt(2);
+                    break;
+                case(2):
+                    view = (MapView) getChildAt(3);
+                    break;
+                default:
+                    view = (MapView) getChildAt((int)nodeLevel);
+            }
             if(view == null){
                 System.out.println(nodeLevel + "What the fuck" + getChildCount());
             }else {
@@ -344,7 +366,29 @@ public class MapViewGroup extends RelativeLayout implements Gui, ScaleGestureDet
         LocationDAO locationDAO= new LocationDAO(getContext());
         nodeLocation = locationDAO.findById(node.getId());
         long nodeLevel = nodeLocation.getFloor().getId();
-        MapView view = (MapView) getChildAt((int)nodeLevel);
+        MapView view;
+        switch((int)nodeLevel){
+            case(5):
+                view = (MapView) getChildAt(4);
+                break;
+            case(4):
+                view = (MapView) getChildAt(5);
+                break;
+            case(6):
+                view = (MapView) getChildAt(7);
+                break;
+            case(7):
+                view = (MapView) getChildAt(6);
+                break;
+            case(3):
+                view = (MapView) getChildAt(2);
+                break;
+            case(2):
+                view = (MapView) getChildAt(3);
+                break;
+            default:
+                view = (MapView) getChildAt((int)nodeLevel);
+        }
         if(view == null){
             System.out.println(nodeLevel + " error " + getChildCount());
         }else {
