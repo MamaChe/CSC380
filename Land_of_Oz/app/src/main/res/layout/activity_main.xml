@@ -11,6 +11,15 @@
             android:layout_width="fill_parent"
             android:layout_height="1dp"
             android:background="#ffffff"/>
+        <ImageView
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:scaleX="-1"
+            android:src="@drawable/icon"
+            android:layout_toLeftOf="@+id/buttonUp"
+            android:elevation="2dp"
+            android:visibility="invisible"
+            android:id="@+id/icon"/>
         <AutoCompleteTextView xmlns:android="http://schemas.android.com/apk/res/android"
             android:id="@+id/autocomplete_startingPoint"
             android:layout_width="fill_parent"
