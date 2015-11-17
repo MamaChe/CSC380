@@ -64,10 +64,9 @@ public class MapView extends ImageView implements View.OnClickListener {
         paint.setAntiAlias(true);
         paint.setColor(Color.YELLOW);
         paint.setStyle(Paint.Style.STROKE);
-        wordPaint.setStrokeWidth(1);
         wordPaint.setAntiAlias(true);
         wordPaint.setColor(Color.BLACK);
-        wordPaint.setStyle(Paint.Style.STROKE);
+        wordPaint.setStyle(Paint.Style.FILL);
         wordPaint.setTextSize(24);
 
         setPivotY(getHeight());
