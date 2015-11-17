@@ -15,9 +15,13 @@ import android.widget.TextView;
 
 import com.group4.land_of_oz.domain.Floor;
 import com.group4.land_of_oz.domain.GraphNode;
+import com.group4.land_of_oz.domain.Label;
 import com.group4.land_of_oz.domain.Location;
 import com.group4.land_of_oz.persistence.FloorDAO;
+import com.group4.land_of_oz.persistence.LabelDAO;
 import com.group4.land_of_oz.persistence.LocationDAO;
+
+import org.w3c.dom.Node;
 
 import java.util.List;
 
@@ -340,6 +344,9 @@ public class MapViewGroup extends RelativeLayout implements Gui, ScaleGestureDet
                 case(1):
                     view = (MapView) getChildAt(0);
                     break;
+                case(8):
+                    view = (MapView) getChildAt(1);
+                    break;
                 default:
                     view = (MapView) getChildAt((int)nodeLevel);
             }
@@ -349,6 +356,37 @@ public class MapViewGroup extends RelativeLayout implements Gui, ScaleGestureDet
                 view.setPathStart(nodeLocation);
                 view.drawPath(neighborLocation);
             }
+        }
+    }
+    public void illustrateNode(GraphNode node){
+        Location nodeLocation;
+        LocationDAO locationDAO= new LocationDAO(getContext());
+        nodeLocation = locationDAO.findById(node.getId());
+        long nodeLevel = nodeLocation.getFloor().getId();
+        MapView view;
+        switch((int)nodeLevel){
+            case(9):
+                view = (MapView) getChildAt(1);
+                break;
+            case(6):
+                view = (MapView) getChildAt(7);
+                break;
+            case(7):
+                view = (MapView) getChildAt(6);
+                break;
+            case(1):
+                view = (MapView) getChildAt(0);
+                break;
+            case(8):
+                view = (MapView) getChildAt(1);
+                break;
+            default:
+                view = (MapView) getChildAt((int)nodeLevel);
+        }
+        if(view == null){
+            System.out.println(nodeLevel + " error " + getChildCount());
+        }else {
+            view.illustrateNode(nodeLocation, Long.toString(node.getId()));
         }
     }
 }

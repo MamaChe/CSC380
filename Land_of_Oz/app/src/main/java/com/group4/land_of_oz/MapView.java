@@ -9,6 +9,7 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Path;
+import android.graphics.Point;
 import android.support.v4.view.MotionEventCompat;
 import android.util.AttributeSet;
 import android.util.Log;
@@ -21,12 +22,18 @@ import android.widget.ImageView;
 
 import com.group4.land_of_oz.domain.Location;
 
+import java.util.ArrayList;
+
 /**
  * Created by ace on 10/15/15.
  */
 public class MapView extends ImageView implements View.OnClickListener {
+    ArrayList<Point> points = new ArrayList<>();
+    ArrayList<Point> namedPoints = new ArrayList<>();
+    ArrayList<String> names = new ArrayList<>();
     private boolean rotated = false;
     private static final Paint paint = new Paint();
+    private static final Paint wordPaint = new Paint();
     private Path path = new Path();
     public AnimatorSet rotate;
     public static final float rotationAngle = 26, rotationYScale = (float).5, rotationXScale = (float).95;
@@ -57,6 +64,12 @@ public class MapView extends ImageView implements View.OnClickListener {
         paint.setAntiAlias(true);
         paint.setColor(Color.YELLOW);
         paint.setStyle(Paint.Style.STROKE);
+        wordPaint.setStrokeWidth(1);
+        wordPaint.setAntiAlias(true);
+        wordPaint.setColor(Color.BLACK);
+        wordPaint.setStyle(Paint.Style.STROKE);
+        wordPaint.setTextSize(24);
+
         setPivotY(getHeight());
         rotate = new AnimatorSet();
         rotate.play(ObjectAnimator.ofFloat(this, "rotationX", rotationAngle)).with(ObjectAnimator.ofFloat(this, "scaleY", rotationYScale)).with(ObjectAnimator.ofFloat(this, "scaleX", rotationXScale));
@@ -66,6 +79,10 @@ public class MapView extends ImageView implements View.OnClickListener {
     public void onDraw(Canvas canvas){
         super.onDraw(canvas);
         canvas.drawPath(path, paint);
+        for(Point point: namedPoints){
+            canvas.drawCircle(point.x, point.y, 3, paint);
+            canvas.drawText(names.get(namedPoints.indexOf(point)), point.x-22, point.y - 10,  wordPaint);
+        }
         //Log.d("drawing", "fs");
     }
     public void resetPath(){
@@ -75,7 +92,7 @@ public class MapView extends ImageView implements View.OnClickListener {
     public void setPathStart(Location start) {
         float scalingFactor = (float)(getRootView().findViewById(R.id.MapViewGroup).getWidth() / 327.0);
         int verticleOffset = (int)((getHeight() - 396 * scalingFactor)/2);
-        path.moveTo(start.getLatitude()*scalingFactor, start.getLongitude()*scalingFactor + verticleOffset);
+        path.moveTo(start.getLatitude() * scalingFactor, start.getLongitude() * scalingFactor + verticleOffset);
     }
     public void rotate(){
         setPivotY(getHeight());
@@ -109,7 +126,13 @@ public class MapView extends ImageView implements View.OnClickListener {
     public void drawPath(Location sink){
         float scalingFactor = (float)(getRootView().findViewById(R.id.MapViewGroup).getWidth() / 327.0);
         int verticleOffset = (int)((getHeight() - 396 * scalingFactor)/2);
-        path.lineTo(sink.getLatitude()*scalingFactor, sink.getLongitude()*scalingFactor + verticleOffset);
+        path.lineTo(sink.getLatitude() * scalingFactor, sink.getLongitude() * scalingFactor + verticleOffset);
         invalidate();
+    }
+    public void illustrateNode(Location location, String name){
+        float scalingFactor = (float)(getRootView().findViewById(R.id.MapViewGroup).getWidth() / 327.0);
+        int verticleOffset = (int)((getHeight() - 396 * scalingFactor)/2);
+        namedPoints.add(new Point((int) (location.getLatitude() * scalingFactor), (int) (location.getLongitude() * scalingFactor + verticleOffset)));
+        names.add(name);
     }
 }

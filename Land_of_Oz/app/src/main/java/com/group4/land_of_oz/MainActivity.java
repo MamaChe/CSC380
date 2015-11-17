@@ -161,6 +161,7 @@ public class MainActivity extends AppCompatActivity {
         for(Neighbor neighbor: neighbors){
             if(neighbor.getNeighbor() != null && neighbor.getNode()!=null)
             ((MapViewGroup)findViewById(R.id.MapViewGroup)).illustrateEdge(neighbor.getNode(), neighbor.getNeighbor());
+            ((MapViewGroup)findViewById(R.id.MapViewGroup)).illustrateNode(neighbor.getNode());
         }
     }
 
