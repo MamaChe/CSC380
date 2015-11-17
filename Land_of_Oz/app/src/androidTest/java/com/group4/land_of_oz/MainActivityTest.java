@@ -1,3 +1,4 @@
+/*
 package com.group4.land_of_oz;
 
 import android.test.ActivityInstrumentationTestCase2;
@@ -18,9 +19,11 @@ import org.junit.Test;
 import java.util.ArrayList;
 import java.util.List;
 
+*/
 /**
  * Created by ericm on 10/21/2015.
- */
+ *//*
+
 public class MainActivityTest extends ActivityInstrumentationTestCase2<MainActivity> {
 
     public MainActivityTest() {
@@ -113,4 +116,4 @@ public class MainActivityTest extends ActivityInstrumentationTestCase2<MainActiv
         Assert.assertTrue(dao.getGraph()!=null);
     }
 
-}
+}*/

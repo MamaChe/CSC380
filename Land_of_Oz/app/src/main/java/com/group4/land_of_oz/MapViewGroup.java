@@ -325,40 +325,19 @@ public class MapViewGroup extends RelativeLayout implements Gui, ScaleGestureDet
         if(nodeLocation.getFloor() == null || neighborLocation.getFloor() == null){
             throw new IOException("Floor null in the location, node/location id:"+nodeLocation.getId());
         }
-        long nodeLevel = nodeLocation.getFloor().getId();
+        long nodeLevel = nodeLocation.getFloor().getLevel();
         long neighborLevel = neighborLocation.getFloor().getId();
         if(nodeLocation.getFloor().getLevel() == neighborLocation.getFloor().getLevel()) {
             MapView view;
             switch((int)nodeLevel){
-                case(0):
-                    view = (MapView) getChildAt(0);
-                    break;
-                case(1):
-                    view = (MapView) getChildAt(0);
-                    break;
-                case(2):
+                case(8):
                     view = (MapView) getChildAt(1);
-                    break;
-                case(3):
-                    view = (MapView) getChildAt(1);
-                    break;
-                case(4):
-                    view = (MapView) getChildAt(2);
-                    break;
-                case(5):
-                    view = (MapView) getChildAt(3);
                     break;
                 case(6):
-                    view = (MapView) getChildAt(4);
+                    view = (MapView) getChildAt(7);
                     break;
                 case(7):
-                    view = (MapView) getChildAt(5);
-                    break;
-                case(8):
                     view = (MapView) getChildAt(6);
-                    break;
-                case(9):
-                    view = (MapView) getChildAt(7);
                     break;
                 default:
                     view = (MapView) getChildAt((int)nodeLevel);
@@ -376,26 +355,17 @@ public class MapViewGroup extends RelativeLayout implements Gui, ScaleGestureDet
         LocationDAO locationDAO= new LocationDAO(getContext());
         nodeLocation = locationDAO.findById(node.getId());
         if (nodeLocation==null) throw new IOException("Location null in the illustrateNode, node/location id:"+node.getId());
-        long nodeLevel = nodeLocation.getFloor().getId();
+        long nodeLevel = nodeLocation.getFloor().getLevel();
         MapView view;
         switch((int)nodeLevel){
-            case(0):
-                view = (MapView) getChildAt(0);
-                break;
-            case(1):
+            case(8):
                 view = (MapView) getChildAt(1);
                 break;
-            case(2):
-                view = (MapView) getChildAt(2);
+            case(6):
+                view = (MapView) getChildAt(7);
                 break;
-            case(3):
-                view = (MapView) getChildAt(3);
-                break;
-            case(4):
-                view = (MapView) getChildAt(4);
-                break;
-            case(5):
-                view = (MapView) getChildAt(5);
+            case(7):
+                view = (MapView) getChildAt(6);
                 break;
             default:
                 view = (MapView) getChildAt((int)nodeLevel);
