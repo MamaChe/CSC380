@@ -73,7 +73,7 @@ public class FloorDAO extends GenericDAO {
                 cursor.close();
         }
 
-        return floors.size() == 1 ? floors.get(0) : null;
+        return floors.size() > 0 ? floors.get(0) : null;
     }
 
     private List<Floor> getFloors(Cursor cursor, Context context) {

@@ -5,10 +5,13 @@ import android.content.Context;
 import android.database.Cursor;
 
 import com.group4.land_of_oz.domain.GraphNode;
+import com.group4.land_of_oz.domain.Location;
 import com.group4.land_of_oz.domain.Neighbor;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 //import java.util.ArrayList;
 //import java.util.List;
@@ -81,7 +84,28 @@ public class NeighborDAO extends GenericDAO{
         return neighbors;
     }
 
+    //the worst efficiency ever, but we need to avoid erros of database related with connections unidirecionais
     public List<GraphNode> findNeighborsByNode(long node_id) {
+        List<GraphNode> nodesNeighbors = new ArrayList<>();
+        nodesNeighbors.addAll(findNeighborsByNodeAux1(node_id));
+        nodesNeighbors.addAll(findNeighborsByNodeAux2(node_id));
+        Set<Long> hash = new HashSet<>();
+        for (GraphNode g: nodesNeighbors) {
+            hash.add(g.getId());
+        }
+        hash.clear();
+        List<Long> list = new ArrayList<>();
+        list.addAll(hash);
+        nodesNeighbors = new ArrayList<>();
+        for (Long id:list) {
+            GraphNode g = new GraphNode();
+            g.setId(id);
+            nodesNeighbors.add(g);
+        }
+        return nodesNeighbors;
+    }
+
+    public List<GraphNode> findNeighborsByNodeAux1(long node_id) {
         String[] projection = {
                 _ID,
                 COLUMN_NAME_NODE_ID,
@@ -117,6 +141,44 @@ public class NeighborDAO extends GenericDAO{
         }
         return graphs;
     }
+
+    public List<GraphNode> findNeighborsByNodeAux2(long node_id) {
+        String[] projection = {
+                _ID,
+                COLUMN_NAME_NODE_ID,
+                COLUMN_NAME_NEIGHBOR_ID,
+        };
+        String where = " "+COLUMN_NAME_NEIGHBOR_ID+" = "+node_id;
+
+        String[] whereValues = null;
+
+        String sortOrder = null;
+
+        Cursor cursor = null;
+        List<Neighbor> neighbors;
+        try {
+            cursor = db.query(
+                    TABLE_NAME,
+                    projection,
+                    where,
+                    whereValues,
+                    null,
+                    null,
+                    sortOrder
+            );
+            neighbors = getNeighbors(cursor, context);
+        } finally {
+            if (cursor != null)
+                cursor.close();
+        }
+
+        List<GraphNode> graphs = new ArrayList<>();
+        for (Neighbor n: neighbors) {
+            graphs.add(n.getNeighbor());
+        }
+        return graphs;
+    }
+
     public List<Neighbor> findAll() {
         // Define a projection that specifies which columns from the database
 // you will actually use after this query.

@@ -8,6 +8,7 @@ import com.group4.land_of_oz.domain.GraphNode;
 import com.group4.land_of_oz.domain.Location;
 import com.group4.land_of_oz.domain.Neighbor;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -76,7 +77,7 @@ public class GraphNodeDAO extends GenericDAO{
 		return super.update(graphNode.getId(), getContentValues(graphNode));
     }
 
-    private List<GraphNode> getGraphNodes(Cursor cursor, Context context) {
+    private List<GraphNode> getGraphNodes(Cursor cursor, Context context) throws IOException {
         List<GraphNode> graphNodes = new ArrayList<GraphNode>();
         GraphNode graphNode;
         Location location;
@@ -90,6 +91,7 @@ public class GraphNodeDAO extends GenericDAO{
 
                 long location_id = cursor.getLong(cursor.getColumnIndexOrThrow(COLUMN_NAME_LOCATION));
                 location = locationDAO.findById(location_id);
+                if(location==null) throw new IOException("Location null in graphNode: "+ graphNode.getId());
                 graphNode.setLocation(location);
 
                 List<GraphNode> neighbors = neighborsDAO.findNeighborsByNode(graphNode.getId());
@@ -102,7 +104,7 @@ public class GraphNodeDAO extends GenericDAO{
     }
 
 
-    public GraphNode findById(long id) {
+    public GraphNode findById(long id) throws IOException {
 
 		      String[] projection = {
                 _ID,
@@ -135,7 +137,7 @@ public class GraphNodeDAO extends GenericDAO{
 	}
 
 
-    public GraphNode getGraph() {
+    public GraphNode getGraph() throws IOException {
         String[] projection = {
                 _ID,
                 COLUMN_NAME_LOCATION,
@@ -169,7 +171,7 @@ public class GraphNodeDAO extends GenericDAO{
 
     //When I wrote this, only God and I understood what I was doing
     //Now, God only knows
-    public GraphNode getGraphAux(GraphNode g){
+    public GraphNode getGraphAux(GraphNode g) throws IOException {
         g.visited = true;
         List<GraphNode> listToRemove = new ArrayList<>();
         for (GraphNode n: g.getNeighbors()) {
@@ -203,6 +205,42 @@ public class GraphNodeDAO extends GenericDAO{
                 getGraphAux(n);
         }
         return g;
+    }
+
+
+
+    public GraphNode getNodeByLocation(Location location) throws IOException {
+
+        if (location==null) return null;
+
+        String[] projection = {
+                _ID,
+                COLUMN_NAME_LOCATION,
+        };
+        String where = COLUMN_NAME_LOCATION+" = "+Long.toString(location.getId());
+
+        String[] whereValues = null;
+
+        String sortOrder = null;
+
+        Cursor cursor = null;
+        List<GraphNode> graphNodes;
+        try {
+            cursor = db.query(
+                    TABLE_NAME,
+                    projection,
+                    where,
+                    whereValues,
+                    null,
+                    null,
+                    sortOrder
+            );
+            graphNodes = getGraphNodes(cursor, context);
+        } finally {
+            if (cursor != null)
+                cursor.close();
+        }
+        return graphNodes.size()!=0?graphNodes.get(0):null;
     }
 
 }

@@ -36,17 +36,18 @@ public class GraphNode extends Persistent {
 
     public GraphNode getNodeByLocation(Location origin) {
         resetVisitedTag(this);
-        return getNodeByLocationAux(origin, this);
+        return this.getNodeByLocationAux(origin);
     }
 
-    public GraphNode getNodeByLocationAux(Location origin, GraphNode g) {
+    public GraphNode getNodeByLocationAux(Location origin) {
         this.visited = true;
-        if(origin.getId() == this.location.getId())
+        if(origin.getId() == this.getLocation().getId())
             return this;
         for (GraphNode neighbor: neighbors) {
             if(neighbor!=null && !neighbor.visited)
-                return neighbor.getNodeByLocationAux(origin,neighbor);
+                return neighbor.getNodeByLocationAux(origin);
         }
+        if(origin!=null) System.out.println("End line: "+this.getId());
         return null;
     }
 
@@ -56,7 +57,7 @@ public class GraphNode extends Persistent {
         if(g.getNeighbors()!=null && g.getNeighbors().size()>0){
             for (GraphNode n: g.getNeighbors()) {
                 if(n!= null && n.visited){
-                    resetVisitedTag(n);
+                   resetVisitedTag(n);
                 }
             }
         }

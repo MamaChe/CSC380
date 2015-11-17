@@ -30,6 +30,7 @@ import com.group4.land_of_oz.persistence.LabelDAO;
 import com.group4.land_of_oz.persistence.LocationDAO;
 import com.group4.land_of_oz.persistence.NeighborDAO;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -182,7 +183,7 @@ public class MainActivity extends AppCompatActivity {
             ((MapViewGroup)findViewById(R.id.MapViewGroup)).incrementActiveLayer();
         }
     }
-    public void test(View v){
+    public void test(View v) throws IOException {
         LocationDAO locationDAO = new LocationDAO(getApplicationContext());
         Navigator navigator = new Navigator(getApplicationContext());
         Location l0 = locationDAO.findById(0);
@@ -209,8 +210,11 @@ public class MainActivity extends AppCompatActivity {
         locations.add(new LocationStub(291, 124, 1));
         ((MapViewGroup)findViewById(R.id.MapViewGroup)).drawPath(locations);
     }
-    public void illustrateGraph(View v){
+    public void illustrateGraph(View v) throws IOException {
         List<Neighbor>neighbors = new NeighborDAO(getApplicationContext()).findAll();
+        for(Neighbor neighbor: neighbors){
+            System.out.println("Connections: "+neighbor.getNode().getId()+":"+neighbor.getNeighbor().getId());
+        }
         for(Neighbor neighbor: neighbors){
             if(neighbor.getNeighbor() != null && neighbor.getNode()!=null)
             ((MapViewGroup)findViewById(R.id.MapViewGroup)).illustrateEdge(neighbor.getNode(), neighbor.getNeighbor());
@@ -218,24 +222,34 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    private void init(){
-        ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, new LabelDAO(this).findAll());
+    private void init() {
+        ArrayAdapter<String> adapter = null;
+        try {
+            adapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, new LabelDAO(this).findAll());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
         ((AutoCompleteTextView)findViewById(R.id.autocomplete_destination)).setAdapter(adapter);
         ((AutoCompleteTextView)findViewById(R.id.autocomplete_startingPoint)).setAdapter(adapter);
 
     }
-    public void go(View v){
-        LabelDAO labelDAO = new LabelDAO(getApplicationContext());
+    public void go(View v) throws IOException {
+        /* LabelDAO labelDAO = new LabelDAO(getApplicationContext());
         Navigator navigator = new Navigator(getApplicationContext());
         String originName = ((AutoCompleteTextView)findViewById(R.id.autocomplete_startingPoint)).getText().toString();
         String destinationName = ((AutoCompleteTextView)findViewById(R.id.autocomplete_destination)).getText().toString();
-
-        Location origin = labelDAO.findByName(originName).getLocation();
-        Location destination = labelDAO.findByName(destinationName).getLocation();
+*/
+        Navigator navigator = new Navigator(getApplicationContext());
+        LocationDAO dao = new LocationDAO(getApplicationContext());
+        Location origin = dao.findById(1);//labelDAO.findByName(originName).getLocation();
+        Location destination = dao.findById(26);//labelDAO.findByName(destinationName).getLocation();
 
         List<Location> locationList = navigator.getBestPath(origin, destination, Location.ELEVATOR);
-
-        ((MapViewGroup)findViewById(R.id.MapViewGroup)).drawPath(locationList);
+        if(locationList!=null)
+            ((MapViewGroup)findViewById(R.id.MapViewGroup)).drawPath(locationList);
+        else{
+            Toast.makeText(getApplicationContext(), "Sorry, path not found. :(", Toast.LENGTH_LONG).show();
+        }
 
     }
     

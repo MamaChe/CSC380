@@ -23,6 +23,7 @@ import com.group4.land_of_oz.persistence.LocationDAO;
 
 import org.w3c.dom.Node;
 
+import java.io.IOException;
 import java.util.List;
 
 /**
@@ -310,81 +311,91 @@ public class MapViewGroup extends RelativeLayout implements Gui, ScaleGestureDet
         }
     }
 
-    public void illustrateEdge(GraphNode node, GraphNode neighbor){
+    public void illustrateEdge(GraphNode node, GraphNode neighbor) throws IOException {
         Location nodeLocation, neighborLocation;
         LocationDAO locationDAO= new LocationDAO(getContext());
         nodeLocation = locationDAO.findById(node.getId());
         neighborLocation= locationDAO.findById(neighbor.getId());
         if(nodeLocation == null){
-            System.out.println("fuck");
-            return;
+            throw new IOException("Location null in the illustrateNode, node/location id:"+node.getId());
         }
         if(neighborLocation == null) {
-            System.out.println("shit");
-            return;
+            throw new IOException("Location null in the illustrateNode, node/location id:"+neighbor.getId());
         }
         if(nodeLocation.getFloor() == null || neighborLocation.getFloor() == null){
-            System.out.println("arse");
-            return;
+            throw new IOException("Floor null in the location, node/location id:"+nodeLocation.getId());
         }
         long nodeLevel = nodeLocation.getFloor().getId();
         long neighborLevel = neighborLocation.getFloor().getId();
         if(nodeLocation.getFloor().getLevel() == neighborLocation.getFloor().getLevel()) {
             MapView view;
             switch((int)nodeLevel){
-                case(5):
-                    view = (MapView) getChildAt(4);
+                case(0):
+                    view = (MapView) getChildAt(0);
                     break;
-                case(4):
-                    view = (MapView) getChildAt(5);
-                    break;
-                case(6):
-                    view = (MapView) getChildAt(7);
-                    break;
-                case(7):
-                    view = (MapView) getChildAt(6);
-                    break;
-                case(3):
-                    view = (MapView) getChildAt(2);
+                case(1):
+                    view = (MapView) getChildAt(0);
                     break;
                 case(2):
+                    view = (MapView) getChildAt(1);
+                    break;
+                case(3):
+                    view = (MapView) getChildAt(1);
+                    break;
+                case(4):
+                    view = (MapView) getChildAt(2);
+                    break;
+                case(5):
                     view = (MapView) getChildAt(3);
+                    break;
+                case(6):
+                    view = (MapView) getChildAt(4);
+                    break;
+                case(7):
+                    view = (MapView) getChildAt(5);
+                    break;
+                case(8):
+                    view = (MapView) getChildAt(6);
+                    break;
+                case(9):
+                    view = (MapView) getChildAt(7);
                     break;
                 default:
                     view = (MapView) getChildAt((int)nodeLevel);
             }
             if(view == null){
-                System.out.println(nodeLevel + "What the fuck" + getChildCount());
+                System.out.println(nodeLevel + "drawing edges" + getChildCount());
             }else {
                 view.setPathStart(nodeLocation);
                 view.drawPath(neighborLocation);
             }
         }
     }
-    public void illustrateNode(GraphNode node){
+    public void illustrateNode(GraphNode node) throws IOException {
         Location nodeLocation;
         LocationDAO locationDAO= new LocationDAO(getContext());
         nodeLocation = locationDAO.findById(node.getId());
+        if (nodeLocation==null) throw new IOException("Location null in the illustrateNode, node/location id:"+node.getId());
         long nodeLevel = nodeLocation.getFloor().getId();
         MapView view;
         switch((int)nodeLevel){
-            case(5):
-                view = (MapView) getChildAt(4);
+            case(0):
+                view = (MapView) getChildAt(0);
                 break;
-            case(4):
-                view = (MapView) getChildAt(5);
-                break;
-            case(6):
-                view = (MapView) getChildAt(7);
-                break;
-            case(7):
-                view = (MapView) getChildAt(6);
-                break;
-            case(3):
-                view = (MapView) getChildAt(2);
+            case(1):
+                view = (MapView) getChildAt(1);
                 break;
             case(2):
+                view = (MapView) getChildAt(2);
+                break;
+            case(3):
                 view = (MapView) getChildAt(3);
+                break;
+            case(4):
+                view = (MapView) getChildAt(4);
+                break;
+            case(5):
+                view = (MapView) getChildAt(5);
                 break;
             default:
                 view = (MapView) getChildAt((int)nodeLevel);

@@ -4,8 +4,10 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 
+import com.group4.land_of_oz.domain.Floor;
 import com.group4.land_of_oz.domain.Location;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -52,7 +54,7 @@ public class LocationDAO extends GenericDAO {
         return super.update(location.getId(), getContentValues(location));
     }
 
-    private List<Location> getLocations(Cursor cursor, Context context) {
+    private List<Location> getLocations(Cursor cursor, Context context) throws IOException {
         List<Location> locations = new ArrayList<Location>();
         Location location;
         FloorDAO floorDAO = new FloorDAO(context);
@@ -64,14 +66,16 @@ public class LocationDAO extends GenericDAO {
                 location.setLatitude(cursor.getFloat(cursor.getColumnIndexOrThrow(COLUMN_NAME_LATITUDE)));
                 location.setLongitude(cursor.getFloat(cursor.getColumnIndexOrThrow(COLUMN_NAME_LONGITUDE)));
                 location.setType(cursor.getInt(cursor.getColumnIndexOrThrow(COLUMN_NAME_TYPE)));
-                location.setFloor(floorDAO.findFloorByID(cursor.getLong(cursor.getColumnIndexOrThrow(COLUMN_NAME_FLOOR_ID))));
+                Floor floor = floorDAO.findFloorByID(cursor.getLong(cursor.getColumnIndexOrThrow(COLUMN_NAME_FLOOR_ID)));
+                location.setFloor(floor);
+                if(floor==null) throw new IOException("Floor null at location: "+location.getId());
                 locations.add(location);
             } while (cursor.moveToNext());
         }
         return locations;
     }
 
-    public List<Location> findByType(int type){
+    public List<Location> findByType(int type) throws IOException {
 // Define a projection that specifies which columns from the database
 // you will actually use after this query.
         String[] projection = {
@@ -109,7 +113,7 @@ public class LocationDAO extends GenericDAO {
         return getLocations(cursor, context);
     }
 
-    public Location findById(long id){
+    public Location findById(long id) throws IOException {
 // Define a projection that specifies which columns from the database
 // you will actually use after this query.
         String[] projection = null;
@@ -144,7 +148,7 @@ public class LocationDAO extends GenericDAO {
     }
 
 
-    public List<Location> findAll(){
+    public List<Location> findAll() throws IOException {
 // Define a projection that specifies which columns from the database
 // you will actually use after this query.
         String[] projection = {

@@ -8,6 +8,7 @@ import android.database.Cursor;
 import com.group4.land_of_oz.domain.Label;
 import com.group4.land_of_oz.domain.Location;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -48,7 +49,7 @@ public class LabelDAO extends GenericDAO {
         return super.update(label.getId(), getContentValues(label));
     }
 
-    private List<Label> getLabels(Cursor cursor, Context context) {
+    private List<Label> getLabels(Cursor cursor, Context context) throws IOException {
         List<Label> labels = new ArrayList<Label>();
         Label label;
         Location location;
@@ -68,7 +69,7 @@ public class LabelDAO extends GenericDAO {
         return labels;
     }
 
-    public Label findById(long id){
+    public Label findById(long id) throws IOException {
 // Define a projection that specifies which columns from the database
 // you will actually use after this query.
         String[] projection = {
@@ -106,7 +107,7 @@ public class LabelDAO extends GenericDAO {
         return labels.size()>0?labels.get(0):null;
     }
 
-    public List<String> findAll() {
+    public List<String> findAll() throws IOException {
         // Define a projection that specifies which columns from the database
 // you will actually use after this query.
         String[] projection = {
@@ -150,7 +151,7 @@ public class LabelDAO extends GenericDAO {
     }
 
 
-    public Label findByName(String name){
+    public Label findByName(String name) throws IOException {
 // Define a projection that specifies which columns from the database
 // you will actually use after this query.
         String[] projection = {
