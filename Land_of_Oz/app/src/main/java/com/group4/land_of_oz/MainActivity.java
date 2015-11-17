@@ -37,6 +37,7 @@ import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
     boolean naturalScrolling = false, fitness= false, handicap = false ;
+    int countdown = 11;
 
     public static final String PREFS_NAME = "MyPrefsFile1";
     public CheckBox dontShowAgain;
@@ -139,6 +140,9 @@ public class MainActivity extends AppCompatActivity {
         }else{
             handicapSwitch.setVisibility(View.VISIBLE);
             fitnessSwitch.setVisibility(View.VISIBLE);
+        }
+        if(--countdown<=0){
+            findViewById(R.id.icon).setVisibility(View.VISIBLE);
         }
     }
 
