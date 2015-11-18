@@ -242,19 +242,22 @@ public class MainActivity extends AppCompatActivity {
         Navigator navigator = new Navigator(getApplicationContext());
         String originName = ((AutoCompleteTextView)findViewById(R.id.autocomplete_startingPoint)).getText().toString();
         String destinationName = ((AutoCompleteTextView)findViewById(R.id.autocomplete_destination)).getText().toString();
-
-        //Navigator navigator = new Navigator(getApplicationContext());
-       // LocationDAO dao = new LocationDAO(getApplicationContext());
-        Location origin = labelDAO.findByName(originName).getLocation();
-        Location destination = labelDAO.findByName(destinationName).getLocation();
-
-        List<Location> locationList = navigator.getBestPath(origin, destination, Location.ELEVATOR);
-        if(locationList!=null)
-            ((MapViewGroup)findViewById(R.id.MapViewGroup)).drawPath(locationList);
-        else{
+        Label oLabel = labelDAO.findByName(originName);
+        Label dLabel = labelDAO.findByName(destinationName);
+        if(oLabel==null||dLabel==null||oLabel.getLocation()==null||dLabel==null){
             Toast.makeText(getApplicationContext(), "Sorry, path not found. :(", Toast.LENGTH_LONG).show();
-        }
+        } else {
+            Location origin = labelDAO.findByName(originName).getLocation();
+            Location destination = labelDAO.findByName(destinationName).getLocation();
 
+            List<Location> locationList = navigator.getBestPath(origin, destination, Location.ELEVATOR);
+            if (locationList != null) {
+                ((MapViewGroup) findViewById(R.id.MapViewGroup)).drawPath(locationList);
+                Toast.makeText(getApplicationContext(), "We found your path. :)", Toast.LENGTH_LONG).show();
+            } else {
+                Toast.makeText(getApplicationContext(), "Sorry, path not found. :(", Toast.LENGTH_LONG).show();
+            }
+        }
     }
     
     //hide keyboard when any part of the screen other than a text field is touched/clicked
