@@ -10,6 +10,7 @@ import com.group4.land_of_oz.domain.Neighbor;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 //import java.util.ArrayList;
@@ -91,7 +92,7 @@ public class GraphNodeDAO extends GenericDAO{
 
                 long location_id = cursor.getLong(cursor.getColumnIndexOrThrow(COLUMN_NAME_LOCATION));
                 location = locationDAO.findById(location_id);
-                if(location==null) throw new IOException("Location null in graphNode: "+ graphNode.getId());
+//                if(location==null) throw new IOException("Location null in graphNode: "+ graphNode.getId());
                 graphNode.setLocation(location);
 
                 List<GraphNode> neighbors = neighborsDAO.findNeighborsByNode(graphNode.getId());
@@ -158,8 +159,8 @@ public class GraphNodeDAO extends GenericDAO{
                     whereValues,
                     null,
                     null,
-                    sortOrder,
-                    Integer.toString(1)
+                    sortOrder//,
+                    //Integer.toString(1)
             );
             graphNodes = getGraphNodes(cursor, context);
         } finally {
@@ -167,12 +168,27 @@ public class GraphNodeDAO extends GenericDAO{
                 cursor.close();
         }
         //return graphNodes.size()!=0?graphNodes.get(0):null;
-        return graphNodes.size()!=0? getGraphAux(graphNodes.get(0)):null;
+        return getGraphAux(graphNodes);
+    }
+
+    public GraphNode getGraphAux(List<GraphNode> graphNodeList) throws IOException {
+        HashMap<Long, GraphNode> hashMap = new HashMap<Long, GraphNode>();
+        for (GraphNode g : graphNodeList) {
+            hashMap.put(g.getId(), g);
+        }
+        for (GraphNode g : graphNodeList) {
+            List<GraphNode> newNeighbors = new ArrayList<>();
+            for (GraphNode n: g.getNeighbors()) {
+                newNeighbors.add(hashMap.get(n.getId()));
+            }
+            g.setNeighbors((ArrayList<GraphNode>) newNeighbors);
+        }
+        return graphNodeList.get(0);
     }
 
     //When I wrote this, only God and I understood what I was doing
     //Now, God only knows
-    public GraphNode getGraphAux(GraphNode g) throws IOException {
+ /*   public GraphNode getGraphAux(GraphNode g) throws IOException {
         g.visited = true;
         List<GraphNode> listToRemove = new ArrayList<>();
         for (GraphNode n: g.getNeighbors()) {
@@ -208,7 +224,7 @@ public class GraphNodeDAO extends GenericDAO{
         return g;
     }
 
-
+*/
 
     public GraphNode getNodeByLocation(Location location) throws IOException {
 
