@@ -299,13 +299,13 @@ public class MapViewGroup extends RelativeLayout implements Gui, ScaleGestureDet
         for(int i = 0; i < getChildCount(); i++){
             ((MapView)getChildAt(i)).resetPath();
         }
-        ((MapView)getChildAt(source.getFloor().getLevel())).setPathStart(source);
+        ((MapView)getChildAt(transformFloorId((int)source.getFloor().getId()))).setPathStart(source);
         for(int i = 1; i < locations.size();i ++){
             sink = locations.get(i);
-            if(source.getFloor().getLevel() == sink.getFloor().getLevel()){
-                ((MapView)getChildAt(source.getFloor().getLevel())).drawPath(sink);
+            if(transformFloorId((int)source.getFloor().getId()) == transformFloorId((int) sink.getFloor().getId())){
+                ((MapView)getChildAt(transformFloorId((int)source.getFloor().getId()))).drawPath(sink);
             }else{
-                ((MapView)getChildAt(sink.getFloor().getLevel())).setPathStart(sink);
+                ((MapView)getChildAt(transformFloorId((int) sink.getFloor().getId()))).setPathStart(sink);
             }
             source = sink;
         }
