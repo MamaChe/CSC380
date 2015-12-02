@@ -325,23 +325,12 @@ public class MapViewGroup extends RelativeLayout implements Gui, ScaleGestureDet
         if(nodeLocation.getFloor() == null || neighborLocation.getFloor() == null){
             throw new IOException("Floor null in the location, node/location id:"+nodeLocation.getId());
         }
-        long nodeLevel = nodeLocation.getFloor().getLevel();
-        long neighborLevel = neighborLocation.getFloor().getId();
-        if(nodeLocation.getFloor().getLevel() == neighborLocation.getFloor().getLevel()) {
+        int nodeLevel = (int)nodeLocation.getFloor().getId();
+        int neighborLevel = (int)neighborLocation.getFloor().getId();
+        if(transformFloorId(nodeLevel) == transformFloorId(neighborLevel)) {
             MapView view;
-            switch((int)nodeLevel){
-                case(8):
-                    view = (MapView) getChildAt(1);
-                    break;
-                case(6):
-                    view = (MapView) getChildAt(7);
-                    break;
-                case(7):
-                    view = (MapView) getChildAt(6);
-                    break;
-                default:
-                    view = (MapView) getChildAt((int)nodeLevel);
-            }
+            nodeLevel = transformFloorId(nodeLevel);
+            view = (MapView) getChildAt(nodeLevel);
             if(view == null){
                 System.out.println(nodeLevel + "drawing edges" + getChildCount());
             }else {
@@ -355,25 +344,30 @@ public class MapViewGroup extends RelativeLayout implements Gui, ScaleGestureDet
         LocationDAO locationDAO= new LocationDAO(getContext());
         nodeLocation = locationDAO.findById(node.getId());
         if (nodeLocation==null) throw new IOException("Location null in the illustrateNode, node/location id:"+node.getId());
-        long nodeLevel = nodeLocation.getFloor().getLevel();
+        int nodeLevel = (int)nodeLocation.getFloor().getId();
         MapView view;
-        switch((int)nodeLevel){
-            case(8):
-                view = (MapView) getChildAt(1);
-                break;
-            case(6):
-                view = (MapView) getChildAt(7);
-                break;
-            case(7):
-                view = (MapView) getChildAt(6);
-                break;
-            default:
-                view = (MapView) getChildAt((int)nodeLevel);
-        }
+        nodeLevel = transformFloorId(nodeLevel);
+        view = (MapView) getChildAt(nodeLevel);
         if(view == null){
             System.out.println(nodeLevel + " error " + getChildCount());
         }else {
             view.illustrateNode(nodeLocation, Long.toString(node.getId()));
         }
+    }
+    private int transformFloorId(int id){
+        switch(id){
+            case(1):
+                return 0;
+            case(8):
+            case(9):
+                return 1;
+            case(6):
+                return 7;
+            case(7):
+                return 6;
+            default:
+                return id;
+        }
+
     }
 }

@@ -217,7 +217,7 @@ public class MainActivity extends AppCompatActivity {
     public void illustrateGraph(View v) throws IOException {
         List<Neighbor>neighbors = new NeighborDAO(getApplicationContext()).findAll();
         for(Neighbor neighbor: neighbors){
-            System.out.println("Connections: "+neighbor.getNode().getId()+":"+neighbor.getNeighbor().getId());
+           // System.out.println("Connections: "+neighbor.getNode().getId()+":"+neighbor.getNeighbor().getId());
         }
         for(Neighbor neighbor: neighbors){
             if(neighbor.getNeighbor() != null && neighbor.getNode()!=null)
