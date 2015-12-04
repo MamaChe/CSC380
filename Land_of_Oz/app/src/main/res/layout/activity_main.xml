@@ -85,6 +85,7 @@
             android:layout_toLeftOf="@id/testButton"
             android:id="@+id/illustrator"
             android:onClick="illustrateGraph"
+            android:visibility="invisible"
             />
         <ImageButton
             android:layout_width="wrap_content"
